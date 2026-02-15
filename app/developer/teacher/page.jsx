@@ -7,6 +7,7 @@ import Link from "next/link";
 import { rtdb } from "@/auth/firebase";
 import { ref, get, update } from "firebase/database";
 
+
 // Status configuration matching Students page
 const STATUS_CONFIG = {
     approved: { 
@@ -216,7 +217,7 @@ export default function Teachers () {
                                     subject: subjectNames[teacher.subjectId] || teacher.subjectId,
                                     studentCount: teacher.totalStudents || 0,
                                     photoURL: teacher.profileImage || userData.profileImage,
-                                    status: teacher.status || 'pending', 
+                                    status: teacher.status || 'pending', // Default to pending if no status
                                 };
                             });
                         
