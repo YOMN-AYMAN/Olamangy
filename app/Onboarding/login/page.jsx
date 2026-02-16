@@ -85,9 +85,14 @@ export default function LoginPage() {
         return
       }
 
-      if (dbUser.role === 'pending_approval') {
+      if (dbUser.role === 'pending' && userType === 'teacher') {
         await auth.signOut()
         setErrorMessage("حسابك قيد المراجعة، سيتم إخطارك عندما يتم تفعيله")
+        return
+      }
+
+      if (dbUser.role === 'admin') {
+        router.push("/developer/teacher")
         return
       }
 
@@ -136,6 +141,10 @@ export default function LoginPage() {
       }
 
       if (dbUser.role !== 'pending' && dbUser.signupStep === 'completed') {
+        if (dbUser.role === 'admin') {
+    router.push("/developer/teacher")
+    return
+  }
   router.push("/Onboarding/mainPage")
   return
 }

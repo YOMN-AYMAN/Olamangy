@@ -1,22 +1,24 @@
-
 "use client"
 import { Box, VStack, Text, Stack, HStack, Avatar, Icon } from "@chakra-ui/react"
 import Link from "next/link"
-import { usePathname } from "next/navigation" 
+import { usePathname, useRouter } from "next/navigation" 
 import { motion } from "framer-motion" 
 import { MdOutlinePeople, MdOutlineSettings, MdLogout, MdSchool } from "react-icons/md"
+import { auth } from "@/auth/firebase"
+import { getAuth, signOut } from "firebase/auth"
 
 const MotionBox = motion(Box)
 
 function DeveSideBar() {
     const pathname = usePathname()
+    const router = useRouter()
     const imagePath = "/30175cee-8911-4d80-937d-9c90cc5e9f94.jpg"
     
     const users = [
         {
             id: "1",
             name: "محمود على",
-            avatar: "https://i.pravatar.cc/300?u=iu",
+            avatar: "https://i.pravatar.cc/300?u=iu ",
         },
     ]
 
@@ -25,6 +27,15 @@ function DeveSideBar() {
         { name: "الطلاب", href: "/developer/students", icon: MdOutlinePeople },
         { name: "الاعدادات", href: "/developer/settings", icon: MdOutlineSettings },
     ]
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth)
+            router.push("/Onboarding/login")
+        } catch (error) {
+            console.error("Error signing out:", error)
+        }
+    }
 
     return (
         <Box 
@@ -106,10 +117,11 @@ function DeveSideBar() {
                     })}
                 </VStack>
 
-                {/* 3. زر الخروج السفلي */}
+                {/* Sign Out Button */}
                 <Box px={5}>
                     <HStack 
                         as="button"
+                        onClick={handleLogout}
                         w="100%"
                         bg="white"
                         color="black"
@@ -121,9 +133,7 @@ function DeveSideBar() {
                         transition="all 0.2s"
                     >
                         <Icon as={MdLogout} boxSize={5} />
-                        <Link href="/Onboarding/login">
-                            <Text fontWeight="bold">خروج</Text>
-                        </Link>
+                        <Text fontWeight="bold">خروج</Text>
                     </HStack>
                 </Box>
 

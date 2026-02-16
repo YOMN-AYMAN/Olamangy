@@ -90,13 +90,10 @@ const teacherSubjects = [
   { value: "computers", label: "الحاسب الآلي" },
 ]
 
-// Academic qualifications
-const academicQualifications = [
-  { value: "bachelor", label: "بكالوريوس" },
-  { value: "diploma", label: "دبلوم" },
-  { value: "master", label: "ماجستير" },
-  { value: "phd", label: "دكتوراه" },
-  { value: "professor", label: "أستاذ" },
+const teachingStages = [
+  { value: "primary", label: "الابتدائي" },
+  { value: "preparatory", label: "الإعدادي" },
+  { value: "secondary", label: "الثانوي" },
 ]
 
 export default function Signup2() {
@@ -116,7 +113,7 @@ export default function Signup2() {
 
   // Teacher fields
   const [explanationSubject, setExplanationSubject] = useState("")
-  const [teacherQualification, setTeacherQualification] = useState("")
+  const [teacherStages, setTeacherStages] = useState([])
   const [teacherLanguage, setTeacherLanguage] = useState("")
   const [profileImage, setProfileImage] = useState(null) // Will store base64 string
 
@@ -197,21 +194,21 @@ export default function Signup2() {
 
   // Handle user type switch with animation
   const handleSwitchUserType = () => {
-    setIsAnimating(true)
-    setTimeout(() => {
-      setUserType(userType === "student" ? "teacher" : "student")
-      // Reset fields when switching
-      setAcademicStage("")
-      setAcademicYear("")
-      setDepartment("")
-      setSecondLanguage("")
-      setExplanationSubject("")
-      setTeacherQualification("")
-      setTeacherLanguage("")
-      setProfileImage(null)
-      setTimeout(() => setIsAnimating(false), 50)
-    }, 300)
-  }
+  setIsAnimating(true)
+  setTimeout(() => {
+    setUserType(userType === "student" ? "teacher" : "student")
+    // Reset fields when switching
+    setAcademicStage("")
+    setAcademicYear("")
+    setDepartment("")
+    setSecondLanguage("")
+    setExplanationSubject("")
+    setTeacherStages([]) // Changed from setTeacherQualification("")
+    setTeacherLanguage("")
+    setProfileImage(null)
+    setTimeout(() => setIsAnimating(false), 50)
+  }, 300)
+}
 
   // Determine back button destination
   const handleBack = () => {
@@ -222,86 +219,99 @@ export default function Signup2() {
     }
   }
 
-  // Handle form submission - Save to Firebase Realtime Database
   const handleSubmit = async () => {
-    if (!signupData) {
-      toaster.create({
-        title: "خطأ",
-        description: "بيانات المستخدم غير موجودة",
-        type: "error",
-        duration: 3000,
-      })
-      return
-    }
+  if (!signupData) {
+    toaster.create({
+      title: "خطأ",
+      description: "بيانات المستخدم غير موجودة",
+      type: "error",
+      duration: 3000,
+    })
+    return
+  }
 
-    setLoading(true)
-    
-    try {
-      // Prepare data based on user type
+  setLoading(true)
+  
+  try {
+    if (userType === "teacher") {
+      // Save to users collection (basic info from signup1)
       const userData = {
-        userType: userType,
-        role: userType === "teacher" ? "pending_approval" : userType,
+        userType: "teacher",
+        role: "pending",
         signupStep: 'completed',
         emailVerified: true,
         completedAt: new Date().toISOString(),
-        ...(userType === "student" ? {
-          academicStage,
-          academicYear,
-          ...(isSecondary && { department, secondLanguage })
-        } : {
-          explanationSubject,
-          teacherQualification,
-          teacherLanguage,
-          profileImage: profileImage // base64 string
-        })
+      }
+      
+      await update(ref(rtdb, 'users/' + signupData.uid), userData)
+
+      // Save to teachers collection (additional teacher-specific data)
+      const teacherData = {
+        id: signupData.uid, // or generate unique teacher ID
+        userId: signupData.uid,
+        subjectId: explanationSubject,
+        stages: teacherStages, // Array of selected stages
+        language: teacherLanguage,
+        profileImage: profileImage,
+        status: "pending",
+        createdAt: new Date().toISOString(),
+        totalStudents: 0,
+        rating: 0,
+      }
+      
+      await update(ref(rtdb, 'teachers/' + signupData.uid), teacherData)
+
+      toaster.create({
+        title: "تم استلام طلبك",
+        description: "سنقوم بمراجعة بياناتك والتواصل معك خلال 24 ساعة",
+        type: "success",
+        duration: 5000,
+      })
+      router.push("/Onboarding/mainPage")
+      
+    } else {
+      // Student - save to users only
+      const userData = {
+        userType: "student",
+        role: "student",
+        signupStep: 'completed',
+        emailVerified: true,
+        completedAt: new Date().toISOString(),
+        academicStage,
+        academicYear,
+        ...(isSecondary && { department, secondLanguage })
       }
 
-      // Update existing user in Realtime Database
-      const userRef = ref(rtdb, 'users/' + signupData.uid)
-      await update(userRef, userData)
+      await update(ref(rtdb, 'users/' + signupData.uid), userData)
 
-      // Clear session storage
-      sessionStorage.removeItem('signupData')
-
-      if (userType === "teacher") {
-  toaster.create({
-    title: "تم استلام طلبك",
-    description: "سنقوم بمراجعة بياناتك والتواصل معك خلال 24 ساعة",
-    type: "success",
-    duration: 5000,
-  })
-  router.push("/Onboarding/pending-approval") // Or stay on same page with message
-} else {
-  toaster.create({
-    title: "تم إنشاء الحساب بنجاح",
-    description: "مرحباً بك في Union! تم التسجيل كطالب",
-    type: "success",
-    duration: 3000,
-  })
-  router.push("/Onboarding/mainPage")
-}
-
-      // Redirect to dashboard
-      router.push("/Onboarding/mainPage")
-
-    } catch (error) {
-      console.error("Error saving data:", error)
       toaster.create({
-        title: "حدث خطأ",
-        description: "فشل في حفظ البيانات، يرجى المحاولة مرة أخرى",
-        type: "error",
+        title: "تم إنشاء الحساب بنجاح",
+        description: "مرحباً بك في Union!",
+        type: "success",
         duration: 3000,
       })
-    } finally {
-      setLoading(false)
+      router.push("/Onboarding/mainPage")
     }
+
+    sessionStorage.removeItem('signupData')
+
+  } catch (error) {
+    console.error("Error saving data:", error)
+    toaster.create({
+      title: "حدث خطأ",
+      description: "فشل في حفظ البيانات، يرجى المحاولة مرة أخرى",
+      type: "error",
+      duration: 3000,
+    })
+  } finally {
+    setLoading(false)
   }
+}
 
   // Check if form is valid
   const isValid = userType === "student"
-    ? academicStage && academicYear && (isSecondary ? department && secondLanguage : true)
-    : explanationSubject && teacherQualification && teacherLanguage && profileImage
-
+  ? academicStage && academicYear && (isSecondary ? department && secondLanguage : true)
+  : explanationSubject && teacherStages.length > 0 && teacherLanguage && profileImage
   // Show loading state while checking session storage
   if (!signupData) {
     return (
@@ -450,28 +460,60 @@ export default function Signup2() {
                   </Box>
 
                   <Box>
-                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right">
-                      المؤهل الدراسي *
-                    </Text>
-                    <CustomSelect
-                      value={teacherQualification}
-                      onChange={setTeacherQualification}
-                      options={academicQualifications}
-                      placeholder="اختر المؤهل الدراسي"
-                    />
-                  </Box>
+  <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right">
+    المراحل الدراسية التي تدرسها *
+  </Text>
+  <Flex gap={2} flexWrap="wrap">
+    {teachingStages.map((stage) => (
+      <Button
+        key={stage.value}
+        size="sm"
+        variant={teacherStages.includes(stage.value) ? "solid" : "outline"}
+        colorScheme={teacherStages.includes(stage.value) ? "blue" : "gray"}
+        onClick={() => {
+          if (teacherStages.includes(stage.value)) {
+            setTeacherStages(teacherStages.filter(s => s !== stage.value))
+          } else {
+            setTeacherStages([...teacherStages, stage.value])
+          }
+        }}
+      >
+        {stage.label}
+      </Button>
+    ))}
+  </Flex>
+  {teacherStages.length === 0 && (
+    <Text fontSize="xs" color="gray.500" mt={1}>
+      اختر مرحلة واحدة على الأقل
+    </Text>
+  )}
+</Box>
 
                   <Box>
-                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right">
-                      اختار اللغة (عربي / لغات) *
-                    </Text>
-                    <CustomSelect
-                      value={teacherLanguage}
-                      onChange={setTeacherLanguage}
-                      options={languages}
-                      placeholder="اختر اللغة"
-                    />
-                  </Box>
+  <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right">
+    لغة الشرح *
+  </Text>
+  <Flex gap={3}>
+    <Button
+      flex={1}
+      size="md"
+      variant={teacherLanguage === "عربي" ? "solid" : "outline"}
+      colorScheme={teacherLanguage === "عربي" ? "blue" : "gray"}
+      onClick={() => setTeacherLanguage("عربي")}
+    >
+      عربي
+    </Button>
+    <Button
+      flex={1}
+      size="md"
+      variant={teacherLanguage === "لغات" ? "solid" : "outline"}
+      colorScheme={teacherLanguage === "لغات" ? "blue" : "gray"}
+      onClick={() => setTeacherLanguage("لغات")}
+    >
+      لغات
+    </Button>
+  </Flex>
+</Box>
 
                   <Box>
                     <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right">
