@@ -1,8 +1,12 @@
+import Navbar from '@/components/ui/Navbar'
 import React from 'react'
 
 function Subscriptions() {
     return (
-        <div>Subscriptions</div>
+        <>
+            <Navbar/>
+            <div>Subscriptions</div>
+        </>
     )
 }
 

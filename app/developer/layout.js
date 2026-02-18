@@ -1,9 +1,20 @@
-import React from 'react'
 
-function deveSideBar() {
+import DeveSideBar from "@/components/developerSideBar"
+import { Box, Flex } from "@chakra-ui/react"
+
+export default function DeveloperLayout({ children }) {
     return (
-        <div>deveSideBar</div>
+        <Flex dir="rtl">
+            <DeveSideBar />
+
+            <Box 
+                as="main"
+                flex="1" 
+                mr="20%" 
+                minH="100vh"
+            >
+                {children}
+            </Box>
+        </Flex>
     )
 }
-
-export default deveSideBar
