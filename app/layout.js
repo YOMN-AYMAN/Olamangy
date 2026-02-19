@@ -10,12 +10,14 @@ import { Provider } from "@/components/ui/provider";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
-export default function RootLayout({ children }) {
   const cairo = Cairo({
     subsets: ["arabic"],
     weight: ["400", "500", "700"],
     variable: "--font-cairo", 
   });
+
+export default function RootLayout({ children }) {
+
   return (
 <html lang="ar" dir="rtl" className={cairo.variable} suppressHydrationWarning>
       <body className={`${cairo.variable} ${geistSans.variable} ${geistMono.variable}`}>

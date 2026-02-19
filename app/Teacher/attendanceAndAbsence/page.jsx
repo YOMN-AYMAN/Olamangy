@@ -1,19 +1,20 @@
 
+
 "use client"
 import { useState } from "react"
 import { 
-  Box, Flex, Text, VStack, HStack, Heading, Icon, 
-  Input, Button, Grid, GridItem 
+  Box, Flex, Text, VStack, HStack, Icon, 
+  Input, Button, Grid, GridItem, SimpleGrid
 } from "@chakra-ui/react"
 import { 
   MdClass, MdLayers, MdSchool, 
   MdQrCodeScanner, MdHighlightOff, MdDeleteOutline,
   MdNotificationsNone, MdSearch, MdPeopleAlt
 } from "react-icons/md"
+import Navbar from "@/components/ui/Navbar"
 
 export default function LessonManager() {
   const [view, setView] = useState("form") 
-  
   const [type, setType] = useState("حصة")
   const [stage, setStage] = useState("الابتدائية")
   const [grade, setGrade] = useState("الأول")
@@ -26,15 +27,25 @@ export default function LessonManager() {
       colorPalette="blue"
       onClick={() => setter(label)}
       borderRadius="xl"
-      px={6}
+      px={{ base: 4, md: 6 }}
       size="sm"
+      flex={{ base: "1", md: "initial" }}
     >
       {label}
     </Button>
   )
 
   return (
-    <Box p={6} bg="#f8fafc" minH="100vh" dir="rtl">
+    <>
+    <Navbar/>
+    <Box 
+      p={{ base: 4, md: 6 }} 
+      bg="#f8fafc" 
+      minH="100vh" 
+      dir="rtl"
+      mr={{ base: "10px", md: "10حء" }}
+      transition="margin 0.3s"
+    >
       <Flex mb={6} gap={4} align="center">
         <Box flex="1" position="relative">
           <Input placeholder="البحث عن" bg="white" borderRadius="xl" border="none" shadow="sm" pr="40px" />
@@ -45,11 +56,11 @@ export default function LessonManager() {
         </Button>
       </Flex>
 
-      <Box bg="white" p={8} borderRadius="2xl" shadow="sm" border="1px solid #E2E8F0">
+      <Box bg="white" p={{ base: 4, md: 8 }} borderRadius="2xl" shadow="sm" border="1px solid #E2E8F0">
         
         {view === "form" ? (
           <VStack align="stretch" gap={8}>
-            <Grid templateColumns="repeat(2, 1fr)" gap={10}>
+            <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={{ base: 8, md: 10 }}>
               <GridItem>
                 <HStack mb={4} gap={2}>
                   <Icon as={MdClass} color="gray.500" />
@@ -61,16 +72,21 @@ export default function LessonManager() {
                 </HStack>
               </GridItem>
 
-              <GridItem borderRight="1px solid #E2E8F0" pr={10}>
+              <GridItem 
+                borderRight={{ base: "none", md: "1px solid #E2E8F0" }} 
+                pr={{ base: 0, md: 10 }}
+                borderTop={{ base: "1px solid #E2E8F0", md: "none" }}
+                pt={{ base: 8, md: 0 }}
+              >
                 <HStack mb={4} gap={2}>
                   <Icon as={MdLayers} color="gray.500" />
                   <Text fontWeight="bold" color="gray.600">المرحلة التعليمية</Text>
                 </HStack>
-                <HStack gap={3}>
+                <Flex gap={3} wrap="wrap">
                   <SelectionButton label="الابتدائية" currentValue={stage} setter={setStage} />
                   <SelectionButton label="الاعدادية" currentValue={stage} setter={setStage} />
                   <SelectionButton label="الثانوية" currentValue={stage} setter={setStage} />
-                </HStack>
+                </Flex>
               </GridItem>
             </Grid>
 
@@ -98,62 +114,68 @@ export default function LessonManager() {
               />
             </Box>
 
-            <Button alignSelf="flex-end" bg="blue.500" color="white" px={12} py={6} borderRadius="xl" onClick={() => setView("details")}>
+            <Button 
+              alignSelf={{ base: "stretch", md: "flex-end" }} 
+              bg="blue.500" 
+              color="white" 
+              px={12} 
+              py={6} 
+              borderRadius="xl" 
+              onClick={() => setView("details")}
+            >
               تم
             </Button>
           </VStack>
 
         ) : (
-          <VStack align="stretch" gap={12}>
-            <Flex justify="space-between" align="center" wrap="wrap" gap={6}>
-              <HStack gap={4} flex="1" minW="200px">
+          <VStack align="stretch" gap={8}>
+            <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+              <HStack gap={4}>
                 <Text fontWeight="bold" color="gray.600">النوع :</Text>
                 <Text fontWeight="bold">{type}</Text> 
               </HStack>
-              <HStack gap={4} flex="1" minW="200px">
+              <HStack gap={4}>
                 <Text fontWeight="bold" color="gray.600">العنوان :</Text>
                 <Text fontWeight="bold">{title || "لم يتم تحديد عنوان"}</Text> 
               </HStack>
-            </Flex>
-
-            <Flex justify="space-between" align="center" wrap="wrap" gap={6}>
-              <HStack gap={4} flex="1" minW="200px">
+              <HStack gap={4}>
                 <Icon as={MdLayers} />
-                <Text fontWeight="bold" color="gray.600">المرحلة التعليمية :</Text>
+                <Text fontWeight="bold" color="gray.600">المرحلة :</Text>
                 <Text fontWeight="bold">{stage}</Text>
               </HStack>
-              <HStack gap={4} flex="1" minW="200px">
+              <HStack gap={4}>
                 <Icon as={MdSchool} />
-                <Text fontWeight="bold" color="gray.600">الصف الدراسي :</Text>
+                <Text fontWeight="bold" color="gray.600">الصف :</Text>
                 <Text fontWeight="bold">{grade}</Text>
               </HStack>
-            </Flex>
+            </SimpleGrid>
 
-            <HStack gap={4}>
-              <Icon as={MdPeopleAlt} color="gray.400" />
+            <HStack gap={4} p={4} bg="blue.50" borderRadius="xl">
+              <Icon as={MdPeopleAlt} color="blue.500" />
               <Text fontWeight="bold" color="gray.600">عدد الطلاب :</Text>
-              <Text fontWeight="bold">{studentCount} طالب</Text>
+              <Text fontWeight="bold" color="blue.600">{studentCount} طالب</Text>
             </HStack>
 
-            <Flex justify="space-between" mt={10} wrap="wrap" gap={4}>
-              <HStack gap={4}>
-                <Button bg="pink.100" color="pink.600" p={6} borderRadius="xl" onClick={() => setView("form")}>
+            <Flex direction={{ base: "column", lg: "row" }} gap={4} justify="space-between">
+              <Flex gap={4} direction={{ base: "column", sm: "row" }}>
+                <Button flex="1" bg="pink.100" color="pink.600" py={6} borderRadius="xl" onClick={() => setView("form")}>
                   <Icon as={MdDeleteOutline} ml={2} />
                   حذف الحصة
                 </Button>
-                <Button bg="black" color="white" p={6} borderRadius="xl">
+                <Button flex="1" bg="black" color="white" py={6} borderRadius="xl">
                   <Icon as={MdHighlightOff} ml={2} />
                   إغلاق الحصة
                 </Button>
-              </HStack>
-              <Button bg="cyan.500" color="white" p={6} px={10} borderRadius="xl" shadow="md">
+              </Flex>
+              <Button bg="cyan.500" color="white" py={8} px={10} borderRadius="xl" shadow="md" fontSize="lg">
                 Scan QR Code
-                <Icon as={MdQrCodeScanner} mr={2} fontSize="xl" />
+                <Icon as={MdQrCodeScanner} mr={2} fontSize="2xl" />
               </Button>
             </Flex>
           </VStack>
         )}
       </Box>
     </Box>
+    </>
   )
 }
