@@ -1,5 +1,4 @@
 
-
 "use client"
 import Navbar from "@/components/ui/Navbar";
 import { MdVideoLibrary, MdPeopleAlt, MdAnalytics, MdInfoOutline } from "react-icons/md";
@@ -154,6 +153,7 @@ export default function MainDashboard() {
 
                 </VStack>
             </Box>
-        </>
+    </>
     );
 }
+
