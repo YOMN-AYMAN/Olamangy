@@ -1,0 +1,105 @@
+'use client'
+
+import {useMediaQuery} from "@mui/material";
+import {useEffect, useRef, useState} from "react";
+
+// ممرنا defaultColor كخاصية، ويمكنك تغييرها عند استدعاء المكون
+const Wave = ({
+  width = 1440,
+  height = 150,
+  speed = 0.02,
+  defaultColor = "#E91E63" // لون العلمونجي الافتراضي (الوردي)
+}) => {
+  const isXs = useMediaQuery("(max-width:966px)");
+  const [mounted, setMounted] = useState(false);
+  const svgRef = useRef(null);
+  const requestRef = useRef();
+  const offsetRef = useRef(0);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // دالة تحويل اللون لـ RGBA يدوياً لضمان الشفافية
+  const hexToRgba = (hex, alpha) => {
+    // إزالة # إذا كانت موجودة
+    const cleanHex = hex.replace('#', '');
+    const r = parseInt(cleanHex.slice(0, 2), 16);
+    const g = parseInt(cleanHex.slice(2, 4), 16);
+    const b = parseInt(cleanHex.slice(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+  const waves = [
+    {amplitude: 15, frequency: 0.01, speedMult: 1.0, alpha: 1},
+    {amplitude: 20, frequency: 0.008, speedMult: 0.8, alpha: 0.5},
+    {amplitude: 25, frequency: 0.006, speedMult: 0.6, alpha: 0.3},
+  ];
+
+  const animate = () => {
+    offsetRef.current += speed;
+    const paths = svgRef.current?.querySelectorAll("path");
+
+    if (paths) {
+      waves.forEach((wave, index) => {
+        let d = `M 0 ${height} `;
+        for (let x = 0; x <= width; x += 20) {
+          const y = (height / 2) + wave.amplitude * Math.sin((x * wave.frequency) + (offsetRef.current * wave.speedMult));
+          d += `L ${x} ${y} `;
+        }
+        d += `L ${width} ${height} L 0 ${height} Z`;
+        paths[index].setAttribute("d", d);
+      });
+    }
+    requestRef.current = requestAnimationFrame(animate);
+  };
+
+  useEffect(() => {
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current);
+  }, [speed]);
+
+  return (
+    <div style={{
+      position: "fixed",
+      bottom: "0",
+      right: "0",
+      width: "100%",
+      zIndex: -1,
+      pointerEvents: "none",
+      overflow: "hidden"
+    }}>
+      {/* طبقة اللون الموحد تحت الأمواج */}
+      <div style={{
+        position: "absolute",
+        bottom: "0",
+        left: "0",
+        width: "100%",
+        height: (mounted && isXs) ? "165vh" : "100vh",
+        background: defaultColor,
+        transform: "translateY(100%)",
+      }} />
+
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${width} ${height}`}
+        style={{
+          width: "100%",
+          display: "block",
+          transform: "scaleY(-1)",
+          filter: "drop-shadow(0px -5px 10px rgba(0,0,0,0.05))"
+        }}
+        preserveAspectRatio="none"
+      >
+        {waves.map((wave, index) => (
+          <path
+            key={index}
+            fill={hexToRgba(defaultColor, wave.alpha)}
+          />
+        ))}
+      </svg>
+    </div>
+  );
+};
+
+export default Wave;
