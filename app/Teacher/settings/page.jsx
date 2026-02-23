@@ -197,12 +197,14 @@ export default function SettingsPage() {
     bio: ""
   });
   ////////////////////////////////
+
   useEffect(() => {
     setUserData(user)
   }, [user])
+
   /////////////////////////////
 
-  const compressImage = (file, maxWidth = 300, quality = 0.8) => {
+  const compressImage = (file, maxWidth = 512, quality = 0.8) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       const reader = new FileReader();
@@ -239,7 +241,6 @@ export default function SettingsPage() {
   const handleClick = () => {
     fileInputRef.current.click();
   };
-
   const handleChangeFile = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -282,16 +283,18 @@ export default function SettingsPage() {
       e.target.value = "";
     }
   };
+
   //////////////////////////////
+
   const handleChange = (e) => {
     const {name, value} = e.target;
     setUserData(prev => ({...prev, [name]: value}));
   };
-
   const handleSave = async () => {
     setIsEditing(false);
     await set(ref(rtdb, `users/${user?.uid}`), userData);
   };
+
   /////////////////////////////
 
   const inputStyle = {

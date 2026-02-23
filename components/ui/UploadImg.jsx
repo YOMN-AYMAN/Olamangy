@@ -69,7 +69,7 @@ export const uploadFileToB2 = async (file, onProgress) => {
   //   try {
   //     const url = await uploadFileToB2(file);
   //     console.log("Direct URL:", url);
-  //     await set(ref(rtdb, `users/${user?.uid}/avatar`), url);
+  //     await set(ref(rtdb, `kkkkkkkkkk`), url);
   //     // if (onUploaded) onUploaded(url);
   //     setUserData(prev => ({...prev, avatar: url}));
 
@@ -83,23 +83,23 @@ export const uploadFileToB2 = async (file, onProgress) => {
   // };
 
 
-            // <input
-            //         type="file"
-            //         ref={fileInputRef}
-            //         disabled={uploading}
-            //         accept="image/jpeg,image/png,image/webp"
-            //         onChange={handleChangeFile}
-            //         style={{display: "none"}}
-            //       />
+  // <input
+  // type="file"
+  // ref={fileInputRef}
+  // disabled={uploading}
+  // accept="image/jpeg,image/png,image/webp"
+  // onChange={handleChangeFile}
+  // style={{display: "none"}}
+  // />
   
-            //       <Button
-            //         size="xs"
-            //         variant="surface"
-            //         colorScheme="gray"
-            //         borderRadius="lg"
-            //         disabled={uploading}
-            //         p={1}
-            //         onClick={handleClick}
-            //       >
-            //         تغيير الصورة
-            //       </Button>
+  //       <Button
+  //         size="xs"
+  //         variant="surface"
+  //         colorScheme="gray"
+  //         borderRadius="lg"
+  //         disabled={uploading}
+  //                   p={1}
+  //                   onClick={handleClick}
+  //                 >
+  //                   تغيير الصورة
+  //                 </Button>
