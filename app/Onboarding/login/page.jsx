@@ -1,12 +1,21 @@
 "use client"
 import Link from "next/link";
 
+<<<<<<< HEAD
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { auth } from "@/auth/firebase" 
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth" 
 import { rtdb } from "@/auth/firebase" 
 import { ref, get } from "firebase/database" 
+=======
+import {useState, useEffect} from "react"
+import {useRouter} from "next/navigation"
+import {auth} from "@/auth/firebase"
+import {signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider} from "firebase/auth"
+import {rtdb} from "@/auth/firebase"
+import {ref, get} from "firebase/database"
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
 
 import {
   Box,
@@ -17,6 +26,7 @@ import {
   Text,
   VStack,
   Separator,
+<<<<<<< HEAD
 } from "@chakra-ui/react"
 
 import { 
@@ -25,6 +35,19 @@ import {
   MdVisibility, 
   MdVisibilityOff 
 } from "react-icons/md"
+=======
+  useBreakpointValue,
+  HStack,
+} from "@chakra-ui/react"
+
+import {
+  MdEmail,
+  MdLock,
+  MdVisibility,
+  MdVisibilityOff
+} from "react-icons/md"
+import {useAuth} from "@/providers/AuthContext";
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
 
 export default function LoginPage() {
   const router = useRouter()
@@ -33,10 +56,19 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+<<<<<<< HEAD
+=======
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const breakpointIsMini = useBreakpointValue({base: true, md: false})
+  const isMini = mounted ? breakpointIsMini : true
+  const {user} = useAuth()
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
   const [errorMessage, setErrorMessage] = useState("")
 
   // Check if user exists in database and get their role/status
   const checkUserInDatabase = async (uid) => {
+<<<<<<< HEAD
   try {
     const userRef = ref(rtdb, 'users/' + uid)
     const snapshot = await get(userRef)
@@ -50,6 +82,21 @@ export default function LoginPage() {
     throw error
   }
 }
+=======
+    try {
+      const userRef = ref(rtdb, 'users/' + uid)
+      const snapshot = await get(userRef)
+
+      if (snapshot.exists()) {
+        return snapshot.val()
+      }
+      return null // User not found
+    } catch (error) {
+      console.error('Database check error:', error)
+      throw error
+    }
+  }
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -115,12 +162,20 @@ export default function LoginPage() {
   }
 
   const handleGoogleLogin = async () => {
+<<<<<<< HEAD
+=======
+    if (loading) return
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
     setLoading(true)
     setErrorMessage("")
 
     try {
       const provider = new GoogleAuthProvider();
+<<<<<<< HEAD
       
+=======
+
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
       provider.setCustomParameters({
         prompt: 'select_account'
       });
@@ -135,11 +190,16 @@ export default function LoginPage() {
           uid: firebaseUser.uid,
           email: firebaseUser.email
         }))
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
         router.push("/Onboarding/signup1")
         return
       }
 
+<<<<<<< HEAD
       if (dbUser.role !== 'pending' && dbUser.signupStep === 'completed') {
         if (dbUser.role === 'admin') {
     router.push("/developer/teacher")
@@ -148,6 +208,17 @@ export default function LoginPage() {
   router.push("/Onboarding/mainPage")
   return
 }
+=======
+      const isCompleted = dbUser.role !== 'pending' && dbUser.signupStep === 'completed'
+      if (isCompleted) {
+        if (dbUser.role === 'admin') {
+          router.push("/developer/teacher")
+          return
+        }
+        router.push("/Onboarding/mainPage")
+        return
+      }
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
 
       if (dbUser.role === 'pending' || dbUser.signupStep !== 'completed') {
         sessionStorage.setItem('signupData', JSON.stringify({
@@ -155,7 +226,11 @@ export default function LoginPage() {
           email: firebaseUser.email,
           fullName: dbUser.fullName || firebaseUser.displayName || ""
         }))
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
         router.push("/Onboarding/signup2")
         return
       }
@@ -169,7 +244,12 @@ export default function LoginPage() {
       } else if (error.code === 'auth/popup-blocked') {
         setErrorMessage("تم حظر النافذة المنبثقة، يرجى السماح بالنوافذ المنبثقة لهذا الموقع")
       } else if (error.code === 'auth/cancelled-popup-request') {
+<<<<<<< HEAD
         setErrorMessage("تم إلغاء طلب تسجيل الدخول")
+=======
+        // Just ignore this or show a mild message, it usually means it was already in progress
+        console.log("Popup request already in progress")
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
       } else if (error.code === 'auth/network-request-failed') {
         setErrorMessage("خطأ في الاتصال بالشبكة")
       } else {
@@ -208,7 +288,11 @@ export default function LoginPage() {
             {/* EMAIL */}
             <Box>
               <Flex align="center" mb={1}>
+<<<<<<< HEAD
                 <MdEmail color="#000" size={24} style={{ marginRight: 6 }} />
+=======
+                <MdEmail color="#000" size={24} style={{marginRight: 6}} />
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 <Text fontWeight="medium" color="#000">البريد الإلكتروني</Text>
               </Flex>
               <Input
@@ -225,7 +309,11 @@ export default function LoginPage() {
 
             <Box>
               <Flex align="center" mb={1}>
+<<<<<<< HEAD
                 <MdLock color="#000" size={24} style={{ marginRight: 6 }} />
+=======
+                <MdLock color="#000" size={24} style={{marginRight: 6}} />
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 <Text fontWeight="medium" color="#000">كلمة المرور</Text>
               </Flex>
 
@@ -239,8 +327,13 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   color="#535353b4"
+<<<<<<< HEAD
                    placeholder="********"
                    _placeholder={{ color: "#a0aec0" }}
+=======
+                  placeholder="********"
+                  _placeholder={{color: "#a0aec0"}}
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 />
                 <Box
                   position="absolute"
@@ -258,6 +351,7 @@ export default function LoginPage() {
 
             {/* Forgot Password with underline - Links to new page */}
             <Link href="/Onboarding/forgot-password" passHref>
+<<<<<<< HEAD
               <Text 
                 textAlign="right" 
                 color="#009EDB" 
@@ -266,6 +360,16 @@ export default function LoginPage() {
                 textDecoration="underline"
                 textUnderlineOffset="3px"
                 _hover={{ color: "#0085bb" }}
+=======
+              <Text
+                textAlign="right"
+                color="#009EDB"
+                fontSize="sm"
+                cursor="pointer"
+                textDecoration="underline"
+                textUnderlineOffset="3px"
+                _hover={{color: "#0085bb"}}
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 transition="color 0.2s"
               >
                 نسيت كلمة السر؟
@@ -278,7 +382,11 @@ export default function LoginPage() {
               color="white"
               size="lg"
               rounded="xl"
+<<<<<<< HEAD
               _hover={{ bg: "#0085bb" }}
+=======
+              _hover={{bg: "#0085bb"}}
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
               onClick={handleLogin}
               loading={loading}
               disabled={loading}
@@ -295,6 +403,7 @@ export default function LoginPage() {
             </Flex>
 
             {/* CUSTOM GOOGLE BUTTON */}
+<<<<<<< HEAD
             <Flex
               as="button"
               align="center"
@@ -335,6 +444,50 @@ export default function LoginPage() {
                 />
               </svg>
             </Flex>
+=======
+            <Button
+              variant="outline"
+              w="100%"
+              h="auto"
+              minH="60px"
+              borderRadius="xl"
+              onClick={handleGoogleLogin}
+              loading={loading}
+              disabled={loading}
+              bg="white"
+              _hover={{bg: "#f9f9f9"}}
+              _active={{bg: "#f1f1f1"}}
+              border="1px solid #ddd"
+              p={4}
+              cursor="pointer"
+              transition="all 0.2s"
+            >
+              <HStack gap={3} justify="center" w="100%">
+                <Text color="#333" fontWeight="medium">
+                  تسجيل الدخول باستخدام جوجل
+                </Text>
+                {/* Google SVG Icon */}
+                <svg width="24" height="24" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  />
+                </svg>
+              </HStack>
+            </Button>
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
 
           </VStack>
         </Box>
@@ -345,6 +498,7 @@ export default function LoginPage() {
             لا تمتلك حساب بعد؟
           </Text>
 
+<<<<<<< HEAD
     <Link href="/Onboarding/signup1">
   <Text
     color="#ff3b5c"
@@ -354,6 +508,17 @@ export default function LoginPage() {
     إنشاء حساب جديد
   </Text>
 </Link>
+=======
+          <Link href="/Onboarding/signup1">
+            <Text
+              color="#ff3b5c"
+              cursor="pointer"
+              borderBottom="3px solid #ff3b5c"
+            >
+              إنشاء حساب جديد
+            </Text>
+          </Link>
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
 
 
         </Flex>

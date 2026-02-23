@@ -1,20 +1,27 @@
 "use client"
-import { Flex, Image } from "@chakra-ui/react"
+import {Flex, Image, Spacer} from "@chakra-ui/react"
+import {ColorModeButton} from "./color-mode"
+import Link from "next/link"
 
 export default function Navbar() {
   return (
     <Flex
       as="nav"
-      w="105%"
+      w="100%"
       h="70px"
       px={8}
       align="center"
-      justify="flex-end"
-      bg="white"
+      border="1px solid"
+      borderColor="border.subtle"
+      justify="space-between"
+      bg="bg.panel"
       boxShadow="sm"
-      mr={-5}
     >
-      <Image src="/Union.svg" alt="Logo" h="40px" />
+      <Link href="/">
+        <Image src="/Union.svg" alt="Logo" h="40px" />
+      </Link>
+      <Spacer />
+      <ColorModeButton />
     </Flex>
   )
 }

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client"
 import { Box, SimpleGrid, Image, Text, VStack, HStack, Avatar, Badge, Container, Heading , Flex} from "@chakra-ui/react";
 
@@ -70,3 +71,14 @@ export default function StudentHome() {
         </Box>
     );
 }
+=======
+import React from 'react'
+
+function Home() {
+    return (
+        <div>Hokkkkkkkkkkkkkkkme</div>
+    )
+}
+
+export default Home
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f

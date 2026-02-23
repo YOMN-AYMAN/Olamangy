@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 
 "use client"
@@ -145,3 +146,14 @@ export default function TechnicalSupport() {
         </>
     );
 }
+=======
+import React from 'react'
+
+function TechnicalSupport() {
+    return (
+        <div>TechnicalSupport</div>
+    )
+}
+
+export default TechnicalSupport
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f

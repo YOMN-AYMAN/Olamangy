@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 
 "use client"
@@ -67,3 +68,14 @@ export default function AllLessons() {
         </>
     );
 }
+=======
+import React from 'react'
+
+function LatestViews() {
+    return (
+        <div>LatestViews</div>
+    )
+}
+
+export default LatestViews
+>>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f

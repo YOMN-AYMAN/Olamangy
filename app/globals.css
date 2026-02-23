@@ -8,6 +8,10 @@
     --background: #ffffff;
     --foreground: #ededed;
   }
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
 }
 
 html,
@@ -40,4 +44,7 @@ a {
   html {
     color-scheme: dark;
   }
+.dark {
+  color-scheme: dark;
+}
 }

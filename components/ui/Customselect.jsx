@@ -48,15 +48,15 @@ export function CustomSelect({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         width="100%"
         justifyContent="space-between"
-        bg="white"
+        bg="bg.subtle"
         border="1px solid"
-        borderColor="#e2e8f0"
+        borderColor="bg.muted"
         rounded="lg"
         px={4}
         py={3}
         h="auto"
         fontWeight="normal"
-        _hover={{ borderColor: "#cbd5e0" }}
+        _hover={{ borderColor: "bg.muted" }}
         _disabled={{
           opacity: 0.6,
           cursor: "not-allowed"
@@ -64,7 +64,7 @@ export function CustomSelect({
         disabled={disabled}
       >
         <Text
-          color={selectedOption ? "#535353" : "#a0aec0"}
+          color={selectedOption ? "fg.muted" : "fg.muted"}
           fontSize="sm"
           textAlign="right"
           width="100%"
