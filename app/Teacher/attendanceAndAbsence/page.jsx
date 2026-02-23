@@ -11,7 +11,6 @@ import {
   MdQrCodeScanner, MdHighlightOff, MdDeleteOutline,
   MdNotificationsNone, MdSearch, MdPeopleAlt
 } from "react-icons/md"
-import Navbar from "@/components/ui/Navbar"
 
 export default function LessonManager() {
   const [view, setView] = useState("form") 
@@ -37,13 +36,11 @@ export default function LessonManager() {
 
   return (
     <>
-    <Navbar/>
     <Box 
       p={{ base: 4, md: 6 }} 
       bg="#f8fafc" 
       minH="100vh" 
       dir="rtl"
-      mr={{ base: "10px", md: "10حء" }}
       transition="margin 0.3s"
     >
       <Flex mb={6} gap={4} align="center">

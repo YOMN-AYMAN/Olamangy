@@ -1,20 +1,22 @@
 
 import TeacherSideBar from "@/components/teacherSideBar"
+import Navbar from "@/components/ui/Navbar"
 import { Box, Flex } from "@chakra-ui/react"
 
 export default function TeacherLayout({ children }) {
     return (
-        <Flex dir="rtl">
+        <Flex flexDirection="row">
             <TeacherSideBar />
-
-            <Box 
-                as="main"
-                flex="1" 
-                mr="20%" 
-                minH="100vh"
-            >
-                {children}
-            </Box>
+            <Flex dir="rtl" flexDirection="column">
+                <Navbar/>
+                <Box 
+                    as="main"
+                    flex="1" 
+                    minH="100vh"
+                >
+                    {children}
+                </Box>
+            </Flex>
         </Flex>
     )
 }

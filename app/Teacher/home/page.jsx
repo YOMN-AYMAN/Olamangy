@@ -1,6 +1,5 @@
 
 "use client"
-import Navbar from "@/components/ui/Navbar";
 import { MdVideoLibrary, MdPeopleAlt, MdAnalytics, MdInfoOutline } from "react-icons/md";
 import { 
     Box, Text, Heading, Icon, HStack, VStack, Card, Avatar, Table, Badge, SimpleGrid 
@@ -35,14 +34,12 @@ export default function MainDashboard() {
 
     return (
         <>
-            <Navbar />
             <Box 
                 p={{ base: 4, md: 8 }} 
                 bg="#f8fafc" 
                 minH="100vh" 
                 dir="rtl" 
                 mt={4}
-                mr={{ base: "10px", md: "10px" }}
                 transition="margin 0.3s"
             >
                 <VStack align="stretch" gap={10}>

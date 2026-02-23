@@ -22,7 +22,7 @@ import { useBreakpointValue } from "@chakra-ui/react"
 
 const MotionBox = motion(Box)
 
-function TeacherSideBar() {
+function StudentSideBar() {
     const pathname = usePathname()
     const router = useRouter()
     const imagePath = "/30175cee-8911-4d80-937d-9c90cc5e9f94.jpg"
@@ -37,14 +37,13 @@ function TeacherSideBar() {
     ]
 
     const navLinks = [
-        { name: "الرئيسية", href: "/Teacher/home", icon: MdDashboard },
-        { name: "الفيديوهات", href: "/Teacher/videos", icon: MdPlayCircleOutline },
-        { name: "الاشتراكات", href: "/Teacher/subscription", icon: MdCardMembership },
-        { name: "الحضور و الغياب", href: "/Teacher/attendanceAndAbsence", icon: MdHowToReg },
-        { name: "الطلاب", href: "/Teacher/students", icon: MdPeopleOutline },
-        { name: "المجتمع", href: "/Teacher/community", icon: MdForum },
-        { name: "الدعم الفنى", href: "/Teacher/technicalSupport", icon: MdSupportAgent },
-        { name: "الاعدادات", href: "/Teacher/settings", icon: MdSettings },
+        { name: "الرئيسية", href: "/Student/home", icon: MdDashboard },
+        { name: "الاشتراكات", href: "/Student/subscriptions", icon: MdCardMembership },
+        { name: "المدرسين", href: "/Student/teacher", icon: MdPeopleOutline },
+        { name: "المجتمع", href: "/Student/community", icon: MdForum },
+        { name: "اخر المشاهدات", href: "/Student/latestView", icon: MdPlayCircleOutline },
+        { name: "الدعم الفنى", href: "/Student/technicalSupport", icon: MdSupportAgent },
+        { name: "الاعدادات", href: "/Student/settings", icon: MdSettings },
     ];
 
     const handleLogout = async () => {
@@ -103,7 +102,7 @@ function TeacherSideBar() {
                     </Stack>
                 </Box>
 
-                <VStack gap={1} align="stretch" mt={5} position="relative" overflowY="auto" flex={1} css={{
+                <VStack gap={3} align="stretch" mt={5} position="relative" overflowY="auto" flex={1} css={{
                     '&::-webkit-scrollbar': { width: '0px' },
                 }}>
                     {navLinks.map((link) => {
@@ -179,4 +178,4 @@ function TeacherSideBar() {
     )
 }
 
-export default TeacherSideBar;
+export default StudentSideBar;

@@ -47,7 +47,7 @@ function DeveSideBar() {
             as="aside"
             w={{ base: "85px", md: "20%" }} 
             h="100vh"
-            position="fixed"
+            position="static"
             right="0"
             top="0"
             zIndex="10"

@@ -4,15 +4,12 @@
 import { Box, VStack, Text, Flex, Icon, Collapsible, HStack } from "@chakra-ui/react";
 import { MdKeyboardArrowUp, MdKeyboardArrowDown, MdSupportAgent, MdOutlineShield, MdGavel } from "react-icons/md";
 import { FaWhatsapp, FaEnvelope } from "react-icons/fa";
-import Navbar from "@/components/ui/Navbar";
 
 export default function TechnicalSupport() {
   return (
     <>
-      <Navbar />
-      <Box p={6} maxW="900px" mx="auto" dir="rtl">
+      <Box p={6} mx="auto" dir="rtl">
 
-        {/* 1. كولابس تواصل معنا - يضم الواتساب والايميل */}
         <Collapsible.Root defaultOpen>
           <Box borderRadius="xl" overflow="hidden" border="1px solid #E2E8F0" bg="white" shadow="sm" mb={4}>
             <Collapsible.Trigger asChild>
@@ -20,7 +17,7 @@ export default function TechnicalSupport() {
                 bg="gray.600"
                 p={4}
                 color="white"
-                justify="space-between" // ده اللي بيخلي الكلام يمين والسهم شمال
+                justify="space-between" 
                 align="center"
                 cursor="pointer"
               >
@@ -38,7 +35,6 @@ export default function TechnicalSupport() {
             
             <Collapsible.Content>
               <Box p={4} bg="gray.50">
-                {/* زرار واتساب */}
                 <Box
                   borderRadius="xl"
                   dir="ltr"
@@ -57,7 +53,6 @@ export default function TechnicalSupport() {
                   </HStack>
                 </Box>
 
-                {/* زرار الإيميل */}
                 <Box
                   borderRadius="xl"
                   dir="ltr"
@@ -78,7 +73,6 @@ export default function TechnicalSupport() {
           </Box>
         </Collapsible.Root>
 
-        {/* 2. كولابس سياسة الخصوصية */}
         <Collapsible.Root>
           <Box borderRadius="xl" overflow="hidden" border="1px solid #E2E8F0" bg="white" shadow="sm" mb={4}>
             <Collapsible.Trigger asChild>
@@ -112,7 +106,6 @@ export default function TechnicalSupport() {
           </Box>
         </Collapsible.Root>
 
-        {/* 3. كولابس شروط الخدمة */}
         <Collapsible.Root>
           <Box borderRadius="xl" overflow="hidden" border="1px solid #E2E8F0" bg="white" shadow="sm">
             <Collapsible.Trigger asChild>

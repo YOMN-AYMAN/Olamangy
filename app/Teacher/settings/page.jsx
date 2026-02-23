@@ -1,5 +1,4 @@
 "use client"
-import Navbar from "@/components/ui/Navbar";
 import { 
   Box, Input, VStack, SimpleGrid, Text, Button, 
   Avatar, Flex, Icon, HStack, Textarea 
@@ -47,7 +46,6 @@ export default function SettingsPage() {
 
   return (
     <>
-      <Navbar />
       <Box p={{ base: 4, md: 8 }} dir="rtl" maxW="1100px" mx="auto">
         <Box bg="white" p={{ base: 6, md: 10 }} borderRadius="3xl" border="1px solid #E2E8F0" shadow="sm">
           

@@ -1,7 +1,6 @@
 
 
 "use client"
-import Navbar from "@/components/ui/Navbar";
 import { 
     Box, Heading, HStack, Icon, Input, Flex, Card, Avatar, SimpleGrid, Text , VStack
 } from "@chakra-ui/react";
@@ -12,7 +11,6 @@ export default function AllLessons() {
 
   return (
     <>
-      <Navbar />
       <Box 
         p={{ base: 4, md: 8 }} 
         dir="rtl" 
