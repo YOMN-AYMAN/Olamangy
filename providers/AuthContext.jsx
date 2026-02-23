@@ -38,7 +38,9 @@ export const AuthProvider = ({children}) => {
 
     return () => unsubscribe();
   }, []);
-
+  if (user === undefined) {
+    return null; // أو Spinner
+  }
   return (
     <AuthContext.Provider value={{user, loading}}>
       {children}

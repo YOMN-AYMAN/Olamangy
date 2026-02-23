@@ -1,6 +1,6 @@
 
 "use client";
-import {Box, VStack, Text, Stack, HStack, Avatar, Icon} from "@chakra-ui/react"
+import {Box, VStack, Text, Stack, HStack, Avatar, Icon, Dialog, DialogContent, DialogHeader, DialogBody, DialogFooter, Button, Portal} from "@chakra-ui/react"
 import Link from "next/link"
 import {usePathname, useRouter} from "next/navigation"
 import {motion} from "framer-motion"
@@ -21,10 +21,13 @@ import {Tooltip} from "@/components/ui/tooltip"
 import {useBreakpointValue} from "@chakra-ui/react"
 import {ColorModeButton} from "@/components/ui/color-mode"
 import {useAuth} from "../providers/AuthContext"
+import {useEffect, useState} from "react";
 
 const MotionBox = motion(Box)
 
 function TeacherSideBar() {
+  const {user} = useAuth()
+  const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const imagePath = "/30175cee-8911-4d80-937d-9c90cc5e9f94.jpg"
@@ -32,14 +35,6 @@ function TeacherSideBar() {
   useEffect(() => setMounted(true), [])
   const breakpointIsMini = useBreakpointValue({base: true, md: false})
   const isMini = mounted ? breakpointIsMini : true
-  const {user} = useAuth()
-  const users = [
-    {
-      id: "1",
-      name: "محمود على",
-      avatar: "https://i.pravatar.cc/300?u=iu",
-    },
-  ]
 
   const navLinks = [
     {name: "الرئيسية", href: "/Teacher/home", icon: MdDashboard},
@@ -87,22 +82,38 @@ function TeacherSideBar() {
             w="100%"
             align="center"
           >
-            {users.map((profile) => (
-              <HStack key={profile.id} gap="3" justify="center">
-                <Avatar.Root size={isMini ? "sm" : "md"}>
-                  <Avatar.Image src={profile.avatar} />
-                </Avatar.Root>
+            <HStack key={user?.id} gap="3" justify="center">
 
-                {!isMini && (
-                  <Stack gap="0" align="flex-start">
-                    <Text fontSize="xs">أهلا</Text>
-                    <Text fontWeight="bold" fontSize="sm" color="gray.700" whiteSpace="nowrap">
-                      {user?.fullName || profile.name}
-                    </Text>
-                  </Stack>
-                )}
-              </HStack>
-            ))}
+              <Dialog.Root>
+                <Dialog.Trigger asChild>
+                  <Avatar.Root  fontWeight="900" size={isMini ? "sm" : "md"}>
+                    <Avatar.Image src={user?.avatar} />
+                    {!user?.avatar && user?.fullName.split("")[0]}
+                  </Avatar.Root>
+                </Dialog.Trigger>
+
+                <Portal display="flex" alignItems="center" justifyContent="center" >
+                  <Dialog.Backdrop />
+                  <Dialog.Positioner>
+                    <Dialog.Content width="fit-content" borderRadius="15px" overflow="hidden" display="flex" alignSelf="center" alignItems="center" justifyContent="center">
+    
+
+                      <Dialog.Body>
+                        <img src={user?.avatar} alt="" />
+                      </Dialog.Body>
+                    </Dialog.Content>
+                  </Dialog.Positioner>
+                </Portal>
+              </Dialog.Root>
+              {!isMini && (
+                <Stack gap="0" align="flex-start">
+                  <Text fontSize="xs">أهلا</Text>
+                  <Text fontWeight="bold" fontSize="sm" color="gray.700" whiteSpace="nowrap">
+                    {user?.fullName || "non name"}
+                  </Text>
+                </Stack>
+              )}
+            </HStack>
           </Stack>
         </Box>
 
@@ -179,6 +190,8 @@ function TeacherSideBar() {
         </Box>
 
       </VStack>
+
+
     </Box>
   )
 }

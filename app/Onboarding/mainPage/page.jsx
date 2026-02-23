@@ -91,11 +91,6 @@ export default function LandingPage() {
             <Box
               display="flex"
               alignItems="center"
-              css={{
-                '@media (max-width: 768px)': {
-                  display: 'none'
-                }
-              }}
             >
               <Box
                 bg="bg.subtle"

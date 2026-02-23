@@ -25,7 +25,7 @@ export default function RootLayout({children}) {
         <Provider>
           <AuthProvider>
             <TeacherProvider>
-              <AppProvider>
+              <AppProvider>    
                 {children}
               </AppProvider>
             </TeacherProvider>
