@@ -1,20 +1,10 @@
 "use client"
 
-<<<<<<< HEAD
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { auth } from "@/auth/firebase"
 import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth"
-// ADD THESE IMPORTS for Realtime Database
 import { getDatabase, ref, set, get } from "firebase/database"
-=======
-import {useState, useEffect} from "react"
-import {useRouter} from "next/navigation"
-import {auth} from "@/auth/firebase"
-import {createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider} from "firebase/auth"
-// ADD THESE IMPORTS for Realtime Database
-import {getDatabase, ref, set, get} from "firebase/database"
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
 
 import {
   Box,
@@ -27,19 +17,11 @@ import {
   Checkbox,
 } from "@chakra-ui/react"
 
-<<<<<<< HEAD
 import { CustomSelect } from "@/components/ui/Customselect"
-
-import { 
-  MdEmail, 
-  MdLock, 
-=======
-import {CustomSelect} from "@/components/ui/Customselect"
 
 import {
   MdEmail,
   MdLock,
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
   MdPerson,
   MdPhone,
   MdCalendarToday,
@@ -50,55 +32,6 @@ import {
 
 // Egyptian governorates and their cities
 const egyptData = {
-<<<<<<< HEAD
-  "القاهرة": ["القاهرة", "مدينة نصر", "مصر الجديدة", "الزمالك", "المعادي", "حلوان", "مدينة الشروق"],
-  "الجيزة": ["الجيزة", "الدقي", "المهندسين", "6 أكتوبر", "الشيخ زايد", "الهرم", "فيصل"],
-  "الإسكندرية": ["الإسكندرية", "المنتزه", "العامرية", "برج العرب", "أبو قير", "المعمورة"],
-  "الدقهلية": ["المنصورة", "طلخا", "ميت غمر", "دكرنس", "أجا", "منية النصر"],
-  "الشرقية": ["الزقازيق", "بلبيس", "العاشر من رمضان", "فاقوس", "أبو كبير", "ديرب نجم"],
-  "القليوبية": ["بنها", "شبرا الخيمة", "القناطر الخيرية", "الخانكة", "قليوب", "طوخ"],
-  "كفر الشيخ": ["كفر الشيخ", "دسوق", "فوه", "مطوبس", "بيلا", "الحامول"],
-  "الغربية": ["طنطا", "المحلة الكبرى", "كفر الزيات", "زفتى", "السنطة", "قطور"],
-  "المنوفية": ["شبين الكوم", "منوف", "أشمون", "قويسنا", "تلا", "الباجور"],
-  "البحيرة": ["دمنهور", "كفر الدوار", "رشيد", "إدكو", "أبو المطامير", "الدلنجات"],
-  "الإسماعيلية": ["الإسماعيلية", "فايد", "القنطرة", "أبو صوير", "التل الكبير"],
-  "السويس": ["السويس", "الأربعين", "عتاقة", "فيصل"],
-  "بورسعيد": ["بورسعيد", "بورفؤاد", "الضواحي", "الشرق", "العرب"],
-  "دمياط": ["دمياط", "رأس البر", "فارسكور", "الزرقا", "كفر سعد"],
-  "الفيوم": ["الفيوم", "طامية", "إطسا", "سنورس", "إبشواي"],
-  "بني سويف": ["بني سويف", "الفشن", "ناصر", "إهناسيا", "ببا", "سمسطا"],
-  "المنيا": ["المنيا", "ملوي", "سمالوط", "مغاغة", "أبو قرقاص", "العدوة"],
-  "أسيوط": ["أسيوط", "ديروط", "منفلوط", "القوصية", "أبنوب", "أبو تيج"],
-  "سوهاج": ["سوهاج", "أخميم", "جرجا", "البلينا", "المراغة", "طما"],
-  "قنا": ["قنا", "قوص", "نجع حمادي", "دشنا", "أبو تشت", "فرشوط"],
-  "أسوان": ["أسوان", "كوم أمبو", "إدفو", "دراو", "نصر النوبة"],
-  "الأقصر": ["الأقصر", "إسنا", "أرمنت", "الطود", "الزينية"],
-  "البحر الأحمر": ["الغردقة", "سفاجا", "القصير", "مرسى علم", "رأس غارب"],
-  "الوادي الجديد": ["الخارجة", "الداخلة", "الفرافرة", "باريس", "بلاط"],
-  "مطروح": ["مرسى مطروح", "الحمام", "العلمين", "سيدي براني", "السلوم"],
-  "شمال سيناء": ["العريش", "رفح", "الشيخ زويد", "بئر العبد", "نخل"],
-  "جنوب سيناء": ["شرم الشيخ", "دهب", "نويبع", "طابا", "سانت كاترين", "رأس سدر"],
-}
-
-const countryCodes = [
-  { code: "+20", country: "مصر", flag: "🇪🇬" },
-  { code: "+966", country: "السعودية", flag: "🇸🇦" },
-  { code: "+971", country: "الإمارات", flag: "🇦🇪" },
-  { code: "+965", country: "الكويت", flag: "🇰🇼" },
-  { code: "+974", country: "قطر", flag: "🇶🇦" },
-  { code: "+973", country: "البحرين", flag: "🇧🇭" },
-  { code: "+968", country: "عمان", flag: "🇴🇲" },
-  { code: "+962", country: "الأردن", flag: "🇯🇴" },
-  { code: "+961", country: "لبنان", flag: "🇱🇧" },
-  { code: "+963", country: "سوريا", flag: "🇸🇾" },
-  { code: "+964", country: "العراق", flag: "🇮🇶" },
-  { code: "+967", country: "اليمن", flag: "🇾🇪" },
-  { code: "+218", country: "ليبيا", flag: "🇱🇾" },
-  { code: "+216", country: "تونس", flag: "🇹🇳" },
-  { code: "+213", country: "الجزائر", flag: "🇩🇿" },
-  { code: "+212", country: "المغرب", flag: "🇲🇦" },
-  { code: "+249", country: "السودان", flag: "🇸🇩" },
-=======
   "القاهرة": [
     "القاهرة", "مدينة نصر", "مصر الجديدة", "الزمالك", "المعادي", "حلوان",
     "مدينة الشروق", "المرج", "عين شمس", "النزهة", "المطرية", "شبرا",
@@ -254,7 +187,6 @@ const countryCodes = [
   {code: "+213", country: "الجزائر", flag: "🇩🇿"},
   {code: "+212", country: "المغرب", flag: "🇲🇦"},
   {code: "+249", country: "السودان", flag: "🇸🇩"},
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
 ]
 
 export default function Signup1() {
@@ -324,24 +256,15 @@ export default function Signup1() {
     try {
       const db = getDatabase()
       const userRef = ref(db, 'users/' + userData.uid)
-<<<<<<< HEAD
-      
-=======
 
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
       await set(userRef, {
         ...userData,
         role: 'pending',
         createdAt: new Date().toISOString(),
         signupStep: 1
       })
-<<<<<<< HEAD
       
       return { success: true }
-=======
-
-      return {success: true}
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
     } catch (error) {
       console.error('Database error:', error)
       throw new Error('Failed to save user data')
@@ -350,46 +273,8 @@ export default function Signup1() {
 
   // Send OTP to email using your backend API
   const sendOTP = async (emailAddress) => {
-<<<<<<< HEAD
-  try {
-    const response = await fetch('https://backend-dolphin.vercel.app/send-otp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: emailAddress,
-        expiresIn: 600 // 10 minutes in seconds
-      }),
-    })
-
-    if (!response.ok) {
-      throw new Error('Failed to send OTP')
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error('OTP error:', error)
-    throw error
-  }
-}
-
-  const handleSignup = async () => {
-// Validation
-if (!fullName || !email || !governorate || !city || !birthDate || !phone) {
-  setErrorMessage("يرجى ملء جميع الحقول المطلوبة")
-  return
-}
-
-// Validate 4 names (اسم رباعي)
-const nameParts = fullName.trim().split(/\s+/).filter(part => part.length > 0)
-if (nameParts.length !== 4) {
-  setErrorMessage("الرجاء إدخال الاسم الرباعي بالكامل (مثال: محمد أحمد عبدالله محمود)")
-  return
-}
-=======
     try {
-      const response = await fetch('https://backend-dolphin.vercel.app/send-otp', {
+      const response = await fetch('https://backend-dolphin.vercel.app/send-otp ', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -424,7 +309,6 @@ if (nameParts.length !== 4) {
       setErrorMessage("الرجاء إدخال الاسم الرباعي بالكامل (مثال: محمد أحمد عبدالله محمود)")
       return
     }
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
 
     // Only validate password if not Google auth
     if (!isGoogleAuth) {
@@ -470,12 +354,8 @@ if (nameParts.length !== 4) {
         governorate,
         city,
         birthDate,
-<<<<<<< HEAD
-        phone: `${countryCode}${phone}`,
-=======
         phone: `${phone}`,
         code: countryCode,
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
         authMethod: isGoogleAuth ? 'google' : 'email',
         emailVerified: isGoogleAuth ? true : false // Google users are pre-verified
       }
@@ -525,11 +405,6 @@ if (nameParts.length !== 4) {
     try {
       // Create fresh provider instance (FIX for COOP issue)
       const provider = new GoogleAuthProvider()
-<<<<<<< HEAD
-      
-=======
-
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
       // Add custom parameters
       provider.setCustomParameters({
         prompt: 'select_account'
@@ -547,11 +422,6 @@ if (nameParts.length !== 4) {
       const db = getDatabase()
       const userRef = ref(db, 'users/' + user.uid)
       const snapshot = await get(userRef)
-<<<<<<< HEAD
-      
-=======
-
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
       if (snapshot.exists()) {
         const existingUser = snapshot.val()
         if (existingUser.role !== 'pending') {
@@ -579,11 +449,7 @@ if (nameParts.length !== 4) {
   }
 
   return (
-<<<<<<< HEAD
-    <Flex direction="column" minH="100vh" bg="#f7f9fc">
-=======
-    <Flex direction="column" minH="100vh" bg="bg.canvas">
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
+    <Flex direction="column" minH="100vh" bg="#f7f9fc" _dark={{bg: "gray.950"}}>
 
       <Flex direction="column" align="center" mt={6} px={4} pb={10}>
         <Image src="/Union.svg" alt="Union Logo" maxW="260px" mb={2} />
@@ -594,47 +460,27 @@ if (nameParts.length !== 4) {
           </Text>
         </Box>
 
-<<<<<<< HEAD
-        <Box bg="white" p={8} rounded="2xl" shadow="lg" w="100%" maxW="600px">
-          <VStack spacing={6} align="stretch">
-
-            {errorMessage && (
-              <Box bg={errorMessage.includes("تم استيراد") ? "green.50" : "red.50"} 
-                   color={errorMessage.includes("تم استيراد") ? "green.500" : "red.500"} 
-                   p={3} rounded="md" fontSize="sm">
-=======
-        <Box bg="bg.subtle" p={8} rounded="2xl" shadow="lg" w="100%" maxW="600px">
+        <Box bg="white" p={8} rounded="2xl" shadow="lg" w="100%" maxW="600px" _dark={{bg: "gray.900"}}>
           <VStack spacing={6} align="stretch">
 
             {errorMessage && (
               <Box bg={errorMessage.includes("تم استيراد") ? "green.50" : "red.50"}
                 color={errorMessage.includes("تم استيراد") ? "green.500" : "red.500"}
                 p={3} rounded="md" fontSize="sm">
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 {errorMessage}
               </Box>
             )}
 
             {/* FULL NAME */}
             <Box>
-              <Flex align="center" mb={2}>
-<<<<<<< HEAD
-                <MdPerson color="#000" size={20} style={{ marginRight: 8 }} />
-                <Text fontWeight="medium" color="#000" fontSize="sm">
-                  الاسم رباعي 
-                </Text>
-              </Flex>
-              <Input
-                bg="white"
-=======
-                <MdPerson color="#000" size={20} style={{marginRight: 8}} />
-                <Text fontWeight="medium" color="#000" fontSize="sm">
+              <Flex align="center" mb={2} color="#000" _dark={{color: "white"}}>
+                <MdPerson color="currentColor" size={20} style={{marginRight: 8}} />
+                <Text fontWeight="medium" fontSize="sm">
                   الاسم رباعي
                 </Text>
               </Flex>
               <Input
-                bg="bg.subtle"
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
+                bg="white"
                 rounded="lg"
                 px={4}
                 py={3}
@@ -644,26 +490,22 @@ if (nameParts.length !== 4) {
                 color="#535353"
                 fontSize="sm"
                 borderColor="#e2e8f0"
-<<<<<<< HEAD
-                _placeholder={{ color: "#a0aec0" }}
-=======
                 _placeholder={{color: "#a0aec0"}}
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
+                _dark={{
+                  bg: "gray.800",
+                  color: "white",
+                  borderColor: "gray.700",
+                  _placeholder: {color: "gray.400"}
+                }}
               />
             </Box>
 
             {/* EMAIL - Disabled if Google Auth */}
             <Box>
-              <Flex align="center" mb={2}>
-<<<<<<< HEAD
-                <MdEmail color="#000" size={20} style={{ marginRight: 8 }} />
-                <Text fontWeight="medium" color="#000" fontSize="sm">
-                  البريد الإلكتروني 
-=======
-                <MdEmail color="#000" size={20} style={{marginRight: 8}} />
-                <Text fontWeight="medium" color="#000" fontSize="sm">
+              <Flex align="center" mb={2} color="#000" _dark={{color: "white"}}>
+                <MdEmail color="currentColor" size={20} style={{marginRight: 8}} />
+                <Text fontWeight="medium" fontSize="sm">
                   البريد الإلكتروني
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 </Text>
                 {isGoogleAuth && (
                   <Text fontSize="xs" color="green.500" mr={2}>(تم التحقق من جوجل)</Text>
@@ -680,28 +522,24 @@ if (nameParts.length !== 4) {
                 color="#535353"
                 fontSize="sm"
                 borderColor="#e2e8f0"
-<<<<<<< HEAD
-                _placeholder={{ color: "#a0aec0" }}
-=======
                 _placeholder={{color: "#a0aec0"}}
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 disabled={isGoogleAuth}
                 readOnly={isGoogleAuth}
+                _dark={{
+                  bg: isGoogleAuth ? "gray.700" : "gray.800",
+                  color: "white",
+                  borderColor: "gray.700",
+                  _placeholder: {color: "gray.400"}
+                }}
               />
             </Box>
 
             {/* GOVERNORATE */}
             <Box>
-              <Flex align="center" mb={2}>
-<<<<<<< HEAD
-                <MdLocationOn color="#000" size={20} style={{ marginRight: 8 }} />
-                <Text fontWeight="medium" color="#000" fontSize="sm">
-                  المحافظة 
-=======
-                <MdLocationOn color="#000" size={20} style={{marginRight: 8}} />
-                <Text fontWeight="medium" color="#000" fontSize="sm">
+              <Flex align="center" mb={2} color="#000" _dark={{color: "white"}}>
+                <MdLocationOn color="currentColor" size={20} style={{marginRight: 8}} />
+                <Text fontWeight="medium" fontSize="sm">
                   المحافظة
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 </Text>
               </Flex>
               <CustomSelect
@@ -714,16 +552,10 @@ if (nameParts.length !== 4) {
 
             {/* CITY */}
             <Box>
-              <Flex align="center" mb={2}>
-<<<<<<< HEAD
-                <MdLocationOn color="#000" size={20} style={{ marginRight: 8 }} />
-                <Text fontWeight="medium" color="#000" fontSize="sm">
-                  المدينة 
-=======
-                <MdLocationOn color="#000" size={20} style={{marginRight: 8}} />
-                <Text fontWeight="medium" color="#000" fontSize="sm">
+              <Flex align="center" mb={2} color="#000" _dark={{color: "white"}}>
+                <MdLocationOn color="currentColor" size={20} style={{marginRight: 8}} />
+                <Text fontWeight="medium" fontSize="sm">
                   المدينة
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 </Text>
               </Flex>
               <CustomSelect
@@ -737,16 +569,10 @@ if (nameParts.length !== 4) {
 
             {/* BIRTH DATE */}
             <Box>
-              <Flex align="center" mb={2}>
-<<<<<<< HEAD
-                <MdCalendarToday color="#000" size={20} style={{ marginRight: 8 }} />
-                <Text fontWeight="medium" color="#000" fontSize="sm">
-                  تاريخ الميلاد 
-=======
-                <MdCalendarToday color="#000" size={20} style={{marginRight: 8}} />
-                <Text fontWeight="medium" color="#000" fontSize="sm">
+              <Flex align="center" mb={2} color="#000" _dark={{color: "white"}}>
+                <MdCalendarToday color="currentColor" size={20} style={{marginRight: 8}} />
+                <Text fontWeight="medium" fontSize="sm">
                   تاريخ الميلاد
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 </Text>
               </Flex>
               <Input
@@ -760,21 +586,20 @@ if (nameParts.length !== 4) {
                 color="#535353"
                 fontSize="sm"
                 borderColor="#e2e8f0"
+                _dark={{
+                  bg: "gray.800",
+                  color: "white",
+                  borderColor: "gray.700"
+                }}
               />
             </Box>
 
             {/* PHONE NUMBER WITH COUNTRY CODE */}
             <Box>
-              <Flex align="center" mb={2}>
-<<<<<<< HEAD
-                <MdPhone color="#000" size={20} style={{ marginRight: 8 }} />
-                <Text fontWeight="medium" color="#000" fontSize="sm">
-                  رقم الهاتف 
-=======
-                <MdPhone color="#000" size={20} style={{marginRight: 8}} />
-                <Text fontWeight="medium" color="#000" fontSize="sm">
+              <Flex align="center" mb={2} color="#000" _dark={{color: "white"}}>
+                <MdPhone color="currentColor" size={20} style={{marginRight: 8}} />
+                <Text fontWeight="medium" fontSize="sm">
                   رقم الهاتف
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 </Text>
               </Flex>
               <Flex gap={2}>
@@ -784,21 +609,13 @@ if (nameParts.length !== 4) {
                   options={countryCodeOptions}
                   width="140px"
                 />
-<<<<<<< HEAD
-                
-=======
-
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 <Input
                   flex={1}
                   bg="white"
                   rounded="lg"
                   px={4}
                   py={3}
-<<<<<<< HEAD
-=======
                   maxLength={10}
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                   value={phone}
                   onChange={(e) => {
                     const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 15)
@@ -808,14 +625,16 @@ if (nameParts.length !== 4) {
                   color="#535353"
                   fontSize="sm"
                   borderColor="#e2e8f0"
-<<<<<<< HEAD
-                  _placeholder={{ color: "#a0aec0" }}
-=======
                   _placeholder={{color: "#a0aec0"}}
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                   type="tel"
                   inputMode="numeric"
                   pattern="[0-9]*"
+                  _dark={{
+                    bg: "gray.800",
+                    color: "white",
+                    borderColor: "gray.700",
+                    _placeholder: {color: "gray.400"}
+                  }}
                 />
               </Flex>
             </Box>
@@ -824,16 +643,10 @@ if (nameParts.length !== 4) {
             {!isGoogleAuth && (
               <>
                 <Box>
-                  <Flex align="center" mb={2}>
-<<<<<<< HEAD
-                    <MdLock color="#000" size={20} style={{ marginRight: 8 }} />
-                    <Text fontWeight="medium" color="#000" fontSize="sm">
-                      كلمة المرور 
-=======
-                    <MdLock color="#000" size={20} style={{marginRight: 8}} />
-                    <Text fontWeight="medium" color="#000" fontSize="sm">
+                  <Flex align="center" mb={2} color="#000" _dark={{color: "white"}}>
+                    <MdLock color="currentColor" size={20} style={{marginRight: 8}} />
+                    <Text fontWeight="medium" fontSize="sm">
                       كلمة المرور
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                     </Text>
                   </Flex>
                   <Box position="relative">
@@ -849,11 +662,13 @@ if (nameParts.length !== 4) {
                       color="#535353"
                       fontSize="sm"
                       borderColor="#e2e8f0"
-<<<<<<< HEAD
-                      _placeholder={{ color: "#a0aec0" }}
-=======
                       _placeholder={{color: "#a0aec0"}}
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
+                      _dark={{
+                        bg: "gray.800",
+                        color: "white",
+                        borderColor: "gray.700",
+                        _placeholder: {color: "gray.400"}
+                      }}
                     />
                     <Box
                       position="absolute"
@@ -880,16 +695,10 @@ if (nameParts.length !== 4) {
                 </Box>
 
                 <Box>
-                  <Flex align="center" mb={2}>
-<<<<<<< HEAD
-                    <MdLock color="#000" size={20} style={{ marginRight: 8 }} />
-                    <Text fontWeight="medium" color="#000" fontSize="sm">
-                      تأكيد كلمة المرور 
-=======
-                    <MdLock color="#000" size={20} style={{marginRight: 8}} />
-                    <Text fontWeight="medium" color="#000" fontSize="sm">
+                  <Flex align="center" mb={2} color="#000" _dark={{color: "white"}}>
+                    <MdLock color="currentColor" size={20} style={{marginRight: 8}} />
+                    <Text fontWeight="medium" fontSize="sm">
                       تأكيد كلمة المرور
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                     </Text>
                   </Flex>
                   <Box position="relative">
@@ -905,11 +714,13 @@ if (nameParts.length !== 4) {
                       color="#535353"
                       fontSize="sm"
                       borderColor="#e2e8f0"
-<<<<<<< HEAD
-                      _placeholder={{ color: "#a0aec0" }}
-=======
                       _placeholder={{color: "#a0aec0"}}
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
+                      _dark={{
+                        bg: "gray.800",
+                        color: "white",
+                        borderColor: "gray.700",
+                        _placeholder: {color: "gray.400"}
+                      }}
                     />
                     <Box
                       position="absolute"
@@ -946,22 +757,8 @@ if (nameParts.length !== 4) {
                 >
                   <Checkbox.HiddenInput />
                   <Checkbox.Control />
-                  <Checkbox.Label color="#000" mr={2}>
+                  <Checkbox.Label color="#000" mr={2} _dark={{color: "white"}}>
                     أوافق على الشروط والأحكام وسياسة الخصوصية
-<<<<<<< HEAD
-                         <Text
-                  as="span"
-                  color="#009EDB"
-                  textDecoration="underline"
-                  cursor="pointer"
-                  onClick={() => setShowTerms(true)}
-                  _hover={{ color: "#0085bb" }}
-                  fontSize="sm"
-                  marginRight={"10px"}
-                >
-                  اقرأ المزيد
-                </Text>
-=======
                     <Text
                       as="span"
                       color="#009EDB"
@@ -974,7 +771,6 @@ if (nameParts.length !== 4) {
                     >
                       اقرأ المزيد
                     </Text>
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                   </Checkbox.Label>
                 </Checkbox.Root>
               </Flex>
@@ -986,11 +782,7 @@ if (nameParts.length !== 4) {
               color="white"
               size="lg"
               rounded="xl"
-<<<<<<< HEAD
-              _hover={{ bg: "#0085bb" }}
-=======
               _hover={{bg: "#0085bb"}}
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
               onClick={handleSignup}
               loading={loading}
               fontSize="md"
@@ -1003,11 +795,11 @@ if (nameParts.length !== 4) {
             {/* OR DIVIDER - Only show if not Google Auth */}
             {!isGoogleAuth && (
               <Flex align="center" justify="center" gap={4}>
-                <Box flex="1" h="1px" bg="#e2e8f0" />
-                <Text color="#666" fontSize="sm" whiteSpace="nowrap">
+                <Box flex="1" h="1px" bg="#e2e8f0" _dark={{bg: "gray.700"}} />
+                <Text color="#666" fontSize="sm" whiteSpace="nowrap" _dark={{color: "gray.400"}}>
                   أو
                 </Text>
-                <Box flex="1" h="1px" bg="#e2e8f0" />
+                <Box flex="1" h="1px" bg="#e2e8f0" _dark={{bg: "gray.700"}} />
               </Flex>
             )}
 
@@ -1022,32 +814,26 @@ if (nameParts.length !== 4) {
                 borderRadius="xl"
                 p={4}
                 bg="white"
-<<<<<<< HEAD
-                _hover={{ bg: "#f9f9f9" }}
-                _active={{ bg: "#f1f1f1" }}
-=======
                 _hover={{bg: "#f9f9f9"}}
                 _active={{bg: "#f1f1f1"}}
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 transition="all 0.2s"
                 onClick={handleGoogleSignup}
                 cursor="pointer"
                 disabled={loading}
+                _dark={{
+                  bg: "gray.800",
+                  borderColor: "gray.600",
+                  _hover: {bg: "gray.700"},
+                  _active: {bg: "gray.600"}
+                }}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24">
-<<<<<<< HEAD
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-=======
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                 </svg>
-                <Text color="#333" fontWeight="medium" fontSize="sm">
+                <Text color="#333" fontWeight="medium" fontSize="sm" _dark={{color: "white"}}>
                   التسجيل باستخدام جوجل
                 </Text>
               </Flex>
@@ -1058,7 +844,7 @@ if (nameParts.length !== 4) {
 
         {/* LOGIN LINK */}
         <Flex mt={8} justify="center" align="center" gap={2} fontSize="lg" fontWeight="bold">
-          <Text color="#333">عندك حساب بالفعل؟</Text>
+          <Text color="#333" _dark={{color: "gray.300"}}>عندك حساب بالفعل؟</Text>
           <Text
             color="#ff3b5c"
             cursor="pointer"
@@ -1068,11 +854,7 @@ if (nameParts.length !== 4) {
             تسجيل دخول
           </Text>
         </Flex>
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
         {/* TERMS MODAL */}
         {showTerms && (
           <>
@@ -1092,40 +874,31 @@ if (nameParts.length !== 4) {
               zIndex={1000}
               border="1px solid"
               borderColor="gray.200"
+              _dark={{
+                bg: "gray.900",
+                borderColor: "gray.700"
+              }}
             >
-              <Flex justify="space-between" align="center" mb={4} pb={3} borderBottom="1px solid" borderColor="gray.200">
-                <Text fontWeight="bold" fontSize="lg" color={"#000"}>
+              <Flex justify="space-between" align="center" mb={4} pb={3} borderBottom="1px solid" borderColor="gray.200" _dark={{borderColor: "gray.700"}}>
+                <Text fontWeight="bold" fontSize="lg" color={"#000"} _dark={{color: "white"}}>
                   الشروط والأحكام
                 </Text>
                 <Text
                   cursor="pointer"
                   fontSize="xl"
                   color="gray.500"
-<<<<<<< HEAD
-                  _hover={{ color: "gray.700" }}
-=======
                   _hover={{color: "gray.700"}}
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
                   onClick={() => setShowTerms(false)}
+                  _dark={{color: "gray.400", _hover: {color: "gray.200"}}}
                 >
                   ×
                 </Text>
               </Flex>
-<<<<<<< HEAD
-              
-=======
-
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
               <Box minH="200px">
-                <Text color="gray.400" textAlign="center" mt={10}>
+                <Text color="gray.400" textAlign="center" mt={10} _dark={{color: "gray.500"}}>
                   المحتوى قيد الإعداد...
                 </Text>
               </Box>
-<<<<<<< HEAD
-              
-=======
-
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
               <Button
                 mt={4}
                 w="100%"
@@ -1136,11 +909,6 @@ if (nameParts.length !== 4) {
                 إغلاق
               </Button>
             </Box>
-<<<<<<< HEAD
-            
-=======
-
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f
             <Box
               position="fixed"
               top={0}
