@@ -1,3 +1,4 @@
+
 "use client"
 import { Box, SimpleGrid, Image, Text, VStack, HStack, Avatar, Badge, Container, Heading , Flex} from "@chakra-ui/react";
 

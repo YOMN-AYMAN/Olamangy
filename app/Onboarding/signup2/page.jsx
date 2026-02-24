@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { rtdb } from "@/auth/firebase" // Import Realtime Database
-import { ref, update } from "firebase/database" // Import update function
+import { rtdb } from "@/auth/firebase"
+import { ref, update } from "firebase/database"
 import {
   Box,
   Button,
@@ -18,14 +18,14 @@ import { MdArrowBack, MdUpload } from "react-icons/md"
 import Navbar from "@/components/ui/Navbar"
 import { CustomSelect } from "@/components/ui/Customselect"
 
-// Academic stages - removed university
+// Academic stages
 const academicStages = [
   { value: "primary", label: "الابتدائية" },
   { value: "preparatory", label: "الإعدادية" },
   { value: "secondary", label: "الثانوية" },
 ]
 
-// Academic years based on stage - removed university
+// Academic years
 const academicYears = {
   primary: [
     { value: "1", label: "الصف الأول الابتدائي" },
@@ -61,6 +61,14 @@ const languages = [
   { value: "italian", label: "الإيطالية" },
   { value: "spanish", label: "الإسبانية" },
   { value: "english", label: "الإنجليزية" },
+]
+
+// NEW: Education type options
+const educationTypes = [
+  { value: "public", label: "تعليم حكومي" },
+  { value: "private", label: "تعليم خاص" },
+  { value: "azhar", label: "الأزهر الشريف" },
+  { value: "institutes", label: "معاهد" },
 ]
 
 // Teacher subjects
@@ -110,20 +118,19 @@ export default function Signup2() {
   const [academicYear, setAcademicYear] = useState("")
   const [department, setDepartment] = useState("")
   const [secondLanguage, setSecondLanguage] = useState("")
+  const [educationType, setEducationType] = useState("") // NEW: حكومي/خاص/أزهر/معاهد
 
   // Teacher fields
   const [explanationSubject, setExplanationSubject] = useState("")
   const [teacherStages, setTeacherStages] = useState([])
   const [teacherLanguage, setTeacherLanguage] = useState("")
-  const [profileImage, setProfileImage] = useState(null) // Will store base64 string
+  const [profileImage, setProfileImage] = useState(null)
 
-  // Check if secondary stage (to enable department and language)
+  // Check if secondary stage
   const isSecondary = academicStage === "secondary"
   
-  // Get available years based on selected stage
   const availableYears = academicStage ? academicYears[academicStage] || [] : []
 
-  // Retrieve signup data from sessionStorage on mount
   useEffect(() => {
     const stored = sessionStorage.getItem('signupData')
     if (!stored) {
@@ -139,15 +146,14 @@ export default function Signup2() {
     }
   }, [router])
 
-  // Reset dependent fields when stage changes
   const handleStageChange = (value) => {
     setAcademicStage(value)
     setAcademicYear("")
     setDepartment("")
     setSecondLanguage("")
+    setEducationType("") // Reset education type when stage changes
   }
 
-  // Convert image to base64
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()

@@ -1,5 +1,3 @@
-
-
 "use client"
 import { 
     Box, Heading, HStack, Icon, Input, Flex, Card, Avatar, SimpleGrid, Text , VStack,
