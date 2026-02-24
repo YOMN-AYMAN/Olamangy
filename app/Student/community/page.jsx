@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 "use client"
 import { Box, HStack, VStack, Text, Input, Avatar, Flex, Icon, IconButton } from "@chakra-ui/react";
@@ -153,14 +152,3 @@ export default function StudentChat() {
         </>
     );
 }
-=======
-import React from 'react'
-
-function Community() {
-    return (
-        <div>Community</div>
-    )
-}
-
-export default Community
->>>>>>> b2e5d71450436003e1b10a8d7ad144413c22186f

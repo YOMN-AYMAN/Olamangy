@@ -458,7 +458,6 @@ export default function LandingPage() {
                     alignItems="center"
                     justifyContent="center"
                     zIndex={2}
-                    border="2px solid"
                     borderColor="border.subtle"
                   >
                     <Image

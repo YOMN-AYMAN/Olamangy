@@ -8,7 +8,7 @@ export default function StudentLayout({ children }) {
     return (
         <Flex flexDirection="row">
             <StudentSideBar />
-            <Flex dir="rtl" flexDirection="column">
+            <Flex dir="rtl" flexDirection="column" minW="calc(100vw - 250px)" minH="100vh">
                 <Navbar/>
                 <Box 
                     as="main"
