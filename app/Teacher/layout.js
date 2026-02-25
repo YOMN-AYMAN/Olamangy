@@ -10,16 +10,13 @@ export default function TeacherLayout({children}) {
         <TeacherSideBar />
 
       </Box>
-      <Box width={"100%"} display={"flex"} flexDirection={"column"}>
+      <Box width={"100%"} overflow="hidden" display={"flex"} flexDirection={"column"}>
         <Box mr={-5}>
           <Navbar />
-
         </Box>
-
         <Box
           as="main"
           flex="1"
-          // mr="20%" 
           minH="100vh"
           bg="bg.canvas"
           transition="background 0.3s ease"

@@ -12,14 +12,12 @@ export const TeacherProvider = ({ children }) => {
 
     useEffect(() => {
         if (user && user.role === "teacher") {
-            const teachersRef = ref(rtdb, 'teachers');
-            const teacherQuery = query(teachersRef, orderByChild('userId'), equalTo(user.uid));
+            const teachersRef = ref(rtdb, `teachers/${user.uid}`);
             
-            const unsubscribe = onValue(teacherQuery, (snapshot) => {
+            const unsubscribe = onValue(teachersRef, (snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.val();
-                    const key = Object.keys(data)[0]; 
-                    setTeacherProfile({ id: key, ...data[key] });
+                    setTeacherProfile(data);
                 }
             });
 
