@@ -36,7 +36,7 @@ export default function MainDashboard() {
         <>
             <Box 
                 p={{ base: 4, md: 8 }} 
-                bg="#f8fafc" 
+                bg="bg.canvas" 
                 minH="100vh" 
                 dir="rtl" 
                 mt={4}
@@ -69,15 +69,15 @@ export default function MainDashboard() {
                         </SimpleGrid>
                     </Box>
 
-                    <Box bg="#fff" p={{ base: 4, md: 6 }} borderRadius="2xl" shadow="sm" overflow="hidden">
-                        <HStack mb={6} gap={2}>
+                    <Box bg="bg.panel" p={{ base: 4, md: 6 }} borderRadius="2xl" shadow="sm" overflow="hidden">
+                        <HStack  mb={6} gap={2}>
                             <Icon as={MdPeopleAlt} color="blue.500" boxSize={6} />
                             <Heading size="md">أحدث الطلاب نشاطاً</Heading>
                         </HStack>
                         
                         <Table.Root size="md" variant="line" interactive>
                             <Table.Header>
-                                <Table.Row bg="gray.50">
+                                <Table.Row bg="bg.subtle">
                                     <Table.ColumnHeader textAlign="center" p={2}>اسم الطالب</Table.ColumnHeader>
                                     <Table.ColumnHeader textAlign="center" p={2} hideBelow="md">المحاضرات</Table.ColumnHeader>
                                     <Table.ColumnHeader textAlign="center" p={2} hideBelow="md">رقم الهاتف</Table.ColumnHeader>
@@ -128,7 +128,7 @@ export default function MainDashboard() {
                     </Box>
 
 
-                    <Box bg="white" p={{ base: 4, md: 6 }} borderRadius="2xl" border="1px solid #E2E8F0" shadow="sm">
+                    <Box bg="bg.panel" p={{ base: 4, md: 6 }} borderRadius="2xl" border="1px solid" borderColor="border.subtle" shadow="sm">
                         <HStack mb={6} gap={2}>
                             <Icon as={MdAnalytics} color="blue.500" boxSize={6} />
                             <Heading size="md">نسب مشاهدة الدروس</Heading>
@@ -137,11 +137,11 @@ export default function MainDashboard() {
                         <Box h={{ base: "250px", md: "350px" }} w="100%">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={chartData} margin={{ top: 10, right: 2, left: -50, bottom: 0 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false}  />
                                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#718096', fontSize: 12 }} />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#718096', fontSize: 12}} />
-                                    <RechartsTooltip cursor={{ fill: '#f7fafc' }} contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
-                                    <Bar dataKey="views" fill="#3182ce" radius={[6, 6, 0, 0]} barSize={isMobile ? 15 : 45} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#967171ff', fontSize: 12}} />
+                                    <RechartsTooltip cursor={{ fill: 'bg.canvas' }} contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
+                                    <Bar dataKey="views" bg="bg.canvas" fill="#3182ce" radius={[6, 6, 0, 0]} barSize={isMobile ? 15 : 45} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </Box>
