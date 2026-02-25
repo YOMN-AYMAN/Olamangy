@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import Navbar from "@/components/ui/Navbar";
 import { Box, SimpleGrid, Image, Text, Flex, Badge, Button, Wrap, WrapItem, Spinner, Center, Menu, Portal } from "@chakra-ui/react";
 import Link from "next/link";
 import { rtdb } from "@/auth/firebase";
@@ -47,7 +46,7 @@ const TeacherCard = ({ teacher, onStatusChange }) => {
 
     return (
         <Box 
-            bg="white" 
+            bg="bg.subtle" 
             p={4} 
             borderRadius="2xl" 
             border="2px solid"
@@ -254,22 +253,25 @@ export default function Teachers () {
 
     return (
         <>
-            <Navbar />
             <Box p={4} dir="rtl">
                 {/* الفلتر العلوي */}
                 <Wrap spacing={4} mb={5} justify="flex-start">
                     {visibleSubjects.map((subject) => (
                         <WrapItem key={subject.id}>
                             <Button
-                                width={20}
-                                bg={selectedSubject === subject.id ? (subject.color || "blue.500") : undefined}
-                                color={selectedSubject === subject.id ? "white" : undefined}
+                                w="fit-content"
+                                minW="max-content" 
+                                whiteSpace="nowrap"
+                                bg={selectedSubject === subject.id ? (subject.color || "blue.500") : "bg.subtle"}
+                                color={selectedSubject === subject.id ? "white" : "fg.DEFAULT"}
                                 variant={selectedSubject === subject.id ? "solid" : "outline"}
                                 borderRadius="xl"
-                                px={8}
+                                px={4} 
+                                h="40px" 
+                                fontSize="sm"
                                 onClick={() => setSelectedSubject(subject.id)}
                                 _hover={{
-                                    bg: selectedSubject === subject.id ? (subject.color || "blue.500") : "gray.100"
+                                    bg: selectedSubject === subject.id ? (subject.color || "blue.500") : "bg.muted"
                                 }}
                             >
                                 {subject.label}

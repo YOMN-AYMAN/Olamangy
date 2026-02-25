@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Box, Flex, Text, VStack, Icon, Image, Badge, Collapsible, Spinner, Center, Menu, Portal } from "@chakra-ui/react";
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
-import Navbar from "@/components/ui/Navbar";
 import { rtdb } from "@/auth/firebase";
 import { ref, get, update } from "firebase/database";
 
@@ -200,7 +199,7 @@ export default function TeacherDetailsPage() {
     if (loading) {
         return (
             <>
-                <Navbar />
+    
                 <Center py={20}>
                     <Spinner size="xl" color="#00A3E0" />
                 </Center>
@@ -211,7 +210,7 @@ export default function TeacherDetailsPage() {
     if (!teacher) {
         return (
             <>
-                <Navbar />
+    
                 <Center py={20}>
                     <Text color="gray.500" fontSize="lg">المدرس غير موجود</Text>
                 </Center>
@@ -237,11 +236,11 @@ export default function TeacherDetailsPage() {
 
     return (
         <>
-            <Navbar />
+
             <Box dir="rtl" p={6}>
 
                 <Box 
-                    bg="white" 
+                    bg="bg.subtle" 
                     p={4} 
                     borderRadius="2xl" 
                     mb={6} 
@@ -310,8 +309,8 @@ export default function TeacherDetailsPage() {
                             <Text fontSize="sm" color="blue.600" dir="ltr">{displayPhone}</Text>
                         </Flex>
                         <VStack align="flex-start" gap={0} fontSize="sm">
-                            <Text color="gray">المراحل: <Text as="span" color="black">{displayStages}</Text></Text>
-                            <Text color="gray">الايميل: <Text as="span" color="black">{displayEmail}</Text></Text>
+                            <Text color="fg.subtle">المراحل: <Text as="span" color="fg.subtle">{displayStages}</Text></Text>
+                            <Text color="fg.subtle">الايميل: <Text as="span" color="fg.subtle">{displayEmail}</Text></Text>
                         </VStack>
                     </Flex>
                 </Box>

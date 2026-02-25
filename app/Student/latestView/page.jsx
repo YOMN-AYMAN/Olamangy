@@ -26,8 +26,8 @@ export default function AllLessons() {
             >
             <HStack gap={3}>
                 <Icon as={MdVideoLibrary} boxSize={8} color="blue.500" />
-                <Heading size={{ base: "lg", md: "xl" }}>الدروس المتاحة 
-                    <Badge p={2} mr={2} fontSize="18px">6</Badge>
+                <Heading size={{ base: "lg", md: "xl" }} color="fg.muted">الدروس المتاحة 
+                    <Badge p={2} mr={2} fontSize="18px" color="fg.muted">6</Badge>
                 </Heading>
             </HStack>
             </Flex>

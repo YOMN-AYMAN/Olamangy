@@ -58,17 +58,15 @@ function StudentSideBar() {
     return (
         <Box 
             as="aside"
-            w={{ base: "85px", md: "20%" }} 
             h="100vh"
-            position="static"
+            position="sticky"
             right="0"
             top="0"
             zIndex="10"
-            backgroundImage={`linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${imagePath})`}
+            backgroundImage={`linear-gradient(rgba(0, 0, 0, 0.9), rgba(17, 17, 17, 0.9)), url(${imagePath})`}
             backgroundSize="cover"
             backgroundPosition="center"
             color="white"
-            dir="rtl"
             borderRadius="30px 0 0 30px"
             transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
         >

@@ -36,17 +36,18 @@ export default function SettingsPage() {
         transition: "all 0.3s ease",
         border: "1px solid",
         borderColor: isEditing ? "blue.400" : "#E2E8F0", 
-        bg: isEditing ? "white" : "gray.50", 
+        bg: isEditing ? "white" : "bg.muted", 
         _focus: {
         borderColor: "blue.500",
         boxShadow: "0 0 0 1px #3182ce"
-        }
+        },
+        color:"fg.muted"
     };
 
     return (
         <>
         <Box p={{ base: 4, md: 8 }} dir="rtl" maxW="1100px" mx="auto">
-            <Box bg="white" p={{ base: 6, md: 10 }} borderRadius="3xl" border="1px solid #E2E8F0" shadow="sm">
+            <Box bg="bg.subtle" p={{ base: 6, md: 10 }} borderRadius="3xl" border="1px solid #E2E8F0" shadow="sm">
             
             <Flex direction={{ base: "column", md: "row" }} justify="space-between" align={{ base: "start", md: "center" }} mb={10} gap={6}>
                 <HStack gap={6}>
@@ -81,7 +82,7 @@ export default function SettingsPage() {
             <SimpleGrid columns={{ base: 1, md: 2 }} gapX={10} gapY={6}>
                 
                 <VStack align="flex-start" gap={1.5}>
-                <Text fontSize="xs" fontWeight="bold" color="gray.500" pr={2}>الاسم الرباعي</Text>
+                <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>الاسم الرباعي</Text>
                 <Input 
                     {...inputStyle}
                     name="fullName" 
@@ -93,7 +94,7 @@ export default function SettingsPage() {
                 </VStack>
 
                 <VStack align="flex-start" gap={1.5}>
-                <Text fontSize="xs" fontWeight="bold" color="gray.500" pr={2}>رقم الهاتف</Text>
+                <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>رقم الهاتف</Text>
                 <Input 
                     {...inputStyle}
                     name="phone"
@@ -104,7 +105,7 @@ export default function SettingsPage() {
                 </VStack>
 
                 <VStack align="flex-start" gap={1.5} gridColumn={{ base: "auto", md: "span 2" }}>
-                <Text fontSize="xs" fontWeight="bold" color="gray.500" pr={2}>البريد الإلكتروني (أساسي)</Text>
+                <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>البريد الإلكتروني (أساسي)</Text>
                 <Input 
                     value={userData.email} 
                     readOnly 
@@ -114,7 +115,7 @@ export default function SettingsPage() {
                 </VStack>
 
                 <VStack align="flex-start" gap={1.5}>
-                <Text fontSize="xs" fontWeight="bold" color="gray.500" pr={2}>المحافظة</Text>
+                <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>المحافظة</Text>
                 <Input 
                     {...inputStyle}
                     name="governorate"
@@ -125,7 +126,7 @@ export default function SettingsPage() {
                 </VStack>
 
                 <VStack align="flex-start" gap={1.5}>
-                <Text fontSize="xs" fontWeight="bold" color="gray.500" pr={2}>المدينة</Text>
+                <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>المدينة</Text>
                 <Input 
                     {...inputStyle}
                     name="city"
@@ -137,7 +138,7 @@ export default function SettingsPage() {
 
 
                 <VStack align="flex-start" gap={1.5}>
-                <Text fontSize="xs" fontWeight="bold" color="gray.500" pr={2}>المرحلة</Text>
+                <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>المرحلة</Text>
                 <Input 
                     {...inputStyle}
                     name="city"
@@ -148,7 +149,7 @@ export default function SettingsPage() {
                 </VStack>
 
                 <VStack align="flex-start" gap={1.5}>
-                <Text fontSize="xs" fontWeight="bold" color="gray.500" pr={2}>المستوى</Text>
+                <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>المستوى</Text>
                 <Input 
                     {...inputStyle}
                     name="city"

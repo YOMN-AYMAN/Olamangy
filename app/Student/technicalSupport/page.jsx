@@ -4,19 +4,17 @@
 import { Box, VStack, Text, Flex, Icon, Collapsible, HStack } from "@chakra-ui/react";
 import { MdKeyboardArrowUp, MdKeyboardArrowDown, MdSupportAgent, MdOutlineShield, MdGavel } from "react-icons/md";
 import { FaWhatsapp, FaEnvelope } from "react-icons/fa";
-import Navbar from "@/components/ui/Navbar";
 
 export default function TechnicalSupport() {
     return (
         <>
-        <Navbar />
-        <Box p={6} maxW="900px" mx="auto" dir="rtl">
+        <Box p={6} maxW="900px" mx="auto" dir="rtl" >
 
-            <Collapsible.Root defaultOpen>
-            <Box borderRadius="xl" overflow="hidden" border="1px solid #E2E8F0" bg="white" shadow="sm" mb={4}>
-                <Collapsible.Trigger asChild>
+            <Collapsible.Root defaultOpen >
+            <Box borderRadius="xl" overflow="hidden" border="1px solid bg.subtle"  shadow="sm" mb={4}>
+                <Collapsible.Trigger asChild >
                 <Flex
-                    bg="gray.600"
+                    bg="bg.subtle"
                     p={4}
                     color="white"
                     justify="space-between" 
@@ -24,19 +22,19 @@ export default function TechnicalSupport() {
                     cursor="pointer"
                 >
                     <HStack gap={3}>
-                    <Icon as={MdSupportAgent} fontSize="xl" />
-                    <Text fontWeight="bold">تواصل معنا</Text>
+                    <Icon as={MdSupportAgent} fontSize="xl" color="fg.muted"/>
+                    <Text fontWeight="bold" color="fg.muted">تواصل معنا</Text>
                     </HStack>
                     <Collapsible.Context>
                     {(context) => (
-                        <Icon as={context.open ? MdKeyboardArrowUp : MdKeyboardArrowDown} fontSize="24px" />
+                        <Icon as={context.open ? MdKeyboardArrowUp : MdKeyboardArrowDown} fontSize="24px" color="fg.muted"/>
                     )}
                     </Collapsible.Context>
                 </Flex>
                 </Collapsible.Trigger>
                 
                 <Collapsible.Content>
-                <Box p={4} bg="gray.50">
+                <Box p={4} bg="bg.muted">
                     <Box
                     borderRadius="xl"
                     dir="ltr"
@@ -76,31 +74,31 @@ export default function TechnicalSupport() {
             </Collapsible.Root>
 
             <Collapsible.Root>
-            <Box borderRadius="xl" overflow="hidden" border="1px solid #E2E8F0" bg="white" shadow="sm" mb={4}>
+            <Box borderRadius="xl" overflow="hidden" border="1px solid bg.subtle" bg="bg.muted" shadow="sm" mb={4}>
                 <Collapsible.Trigger asChild>
                 <Flex
-                    bg="gray.50"
+                    bg="bg.subtle"
                     p={4}
                     color="gray.700"
                     justify="space-between"
                     align="center"
                     cursor="pointer"
-                    borderBottom="1px solid #E2E8F0"
+                    borderBottom="1px solid bg.subtle"
                 >
                     <HStack gap={3}>
-                    <Icon as={MdOutlineShield} color="gray.600" fontSize="xl" />
-                    <Text fontWeight="bold">سياسة الخصوصية</Text>
+                    <Icon as={MdOutlineShield} color="fg.muted" fontSize="xl" />
+                    <Text fontWeight="bold" color="fg.muted">سياسة الخصوصية</Text>
                     </HStack>
                     <Collapsible.Context>
                     {(context) => (
-                        <Icon as={context.open ? MdKeyboardArrowUp : MdKeyboardArrowDown} fontSize="24px" color="gray.400" />
+                        <Icon as={context.open ? MdKeyboardArrowUp : MdKeyboardArrowDown} fontSize="24px" color="fg.muted" />
                     )}
                     </Collapsible.Context>
                 </Flex>
                 </Collapsible.Trigger>
                 <Collapsible.Content>
-                <Box p={4} bg="white">
-                    <Text fontSize="sm" color="gray.600" lineHeight="tall">
+                <Box p={4} bg="bg.muted">
+                    <Text fontSize="sm" color="fg.muted" lineHeight="tall">
                     سياسة الخصوصية..
                     </Text>
                 </Box>
@@ -109,31 +107,31 @@ export default function TechnicalSupport() {
             </Collapsible.Root>
 
             <Collapsible.Root>
-            <Box borderRadius="xl" overflow="hidden" border="1px solid #E2E8F0" bg="white" shadow="sm">
+            <Box borderRadius="xl" overflow="hidden" border="1px solid bg.subtle" bg="bg.muted" shadow="sm">
                 <Collapsible.Trigger asChild>
                 <Flex
-                    bg="gray.50"
+                    bg="bg.subtle"
                     p={4}
                     color="gray.700"
                     justify="space-between"
                     align="center"
                     cursor="pointer"
-                    borderBottom="1px solid #E2E8F0"
+                    borderBottom="1px solid bg.subtle"
                 >
                     <HStack gap={3}>
-                    <Icon as={MdGavel} color="gray.600" fontSize="xl" />
-                    <Text fontWeight="bold">شروط الخدمة</Text>
+                    <Icon as={MdGavel} color="fg.muted" fontSize="xl" />
+                    <Text fontWeight="bold" color="fg.muted">شروط الخدمة</Text>
                     </HStack>
                     <Collapsible.Context>
                     {(context) => (
-                        <Icon as={context.open ? MdKeyboardArrowUp : MdKeyboardArrowDown} fontSize="24px" color="gray.400" />
+                        <Icon as={context.open ? MdKeyboardArrowUp : MdKeyboardArrowDown} fontSize="24px" color="fg.muted" />
                     )}
                     </Collapsible.Context>
                 </Flex>
                 </Collapsible.Trigger>
                 <Collapsible.Content>
-                <Box p={4} bg="white">
-                    <Text fontSize="sm" color="gray.600" lineHeight="tall">
+                <Box p={4} bg="bg.muted">
+                    <Text fontSize="sm" color="fg.muted" lineHeight="tall">
                     شروط الخدمة..
                     </Text>
                 </Box>

@@ -15,12 +15,13 @@ export default function StudentChat() {
             mr={{ base: "10px", md: "10px" }} 
             transition="margin 0.3s"
             direction={{ base: "column", md: "row" }} 
+            color="fg.muted"
         >
             
             <VStack 
             w={{ base: "100%", md: "40%" }} 
             h={{ base: "auto", md: "full" }}
-            bg="white" 
+            bg="bg.subtle" 
             borderRadius="2xl" 
             border="1px solid #E2E8F0" 
             align="stretch" 
@@ -41,13 +42,14 @@ export default function StudentChat() {
                     borderRadius="xl"
                     minW={{ base: "60px", md: "full" }}
                     justify={{ base: "center", md: "flex-start" }}
+                    
                 >
                     <Avatar.Root size="sm" border={i === 1 ? "2px solid #3182ce" : "none"}>
                     <Avatar.Image src={`https://i.pravatar.cc/150?u=${i}`} />
                     <Avatar.Fallback />
                     </Avatar.Root>
                     
-                    <VStack align="flex-start" gap={0} display={{ base: "none", md: "flex" }}>
+                    <VStack align="flex-start" gap={0} display={{ base: "none", md: "flex" }} >
                     <Text fontSize="sm" fontWeight="bold">أحمد محمد</Text>
                     <Text fontSize="xs" color="gray.500" truncate maxW="150px">مستر عندي سؤال...</Text>
                     </VStack>
@@ -59,7 +61,7 @@ export default function StudentChat() {
             {/* منطقة الرسائل */}
             <Flex 
             flex={1} 
-            bg="white" 
+            bg="bg.subtle" 
             borderRadius="2xl" 
             border="1px solid #E2E8F0" 
             direction="column" 
@@ -68,7 +70,7 @@ export default function StudentChat() {
             overflow="hidden"
             >
             {/* Header الشات */}
-            <Box p={4} borderBottom="1px solid #E2E8F0" bg="white">
+            <Box p={4} borderBottom="1px solid #E2E8F0"bg="bg.subtle">
                 <HStack>
                     <Avatar.Root size="xs">
                         <Avatar.Image src="https://i.pravatar.cc/150?u=1" />
@@ -87,7 +89,7 @@ export default function StudentChat() {
                 overflowY="auto" 
                 align="stretch" 
                 gap={4} 
-                bg="#fdfdfd"
+                bg="bg.subtle"
             >
                 <Box 
                     bg="gray.100" 
@@ -130,9 +132,10 @@ export default function StudentChat() {
                 <Input 
                     placeholder="اكتب رسالتك..." 
                     borderRadius="xl" 
-                    bg="gray.50" 
+                    bg="bg.muted" 
                     border="none" 
-                    _focus={{ bg: "white", shadow: "sm" }}
+                    _focus={{ bg: "bg.subtle", shadow: "sm" }}
+                    p={1}
                 />
                 
                 <IconButton 
