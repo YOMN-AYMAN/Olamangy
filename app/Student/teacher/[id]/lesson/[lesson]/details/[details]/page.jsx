@@ -11,7 +11,9 @@ import {
     MdHelpOutline,
     MdAccessTime,
     MdEdit,
-    MdArrowCircleRight
+    MdArrowCircleRight,
+    MdArrowForward,
+    MdArrowBack
 } from "react-icons/md";
 
 // Mock data for the lesson
@@ -43,23 +45,6 @@ const lessonData = {
 
 // Define tabs order for navigation
 const tabsOrder = ["video", "file", "questions"];
-
-const SidebarItem = ({ icon: Icon, label, active = false }) => (
-    <Flex 
-        align="center" 
-        justify="space-between"
-        p={3} 
-        borderRadius="lg"
-        bg={active ? "white" : "transparent"}
-        color={active ? "black" : "white"}
-        _hover={{ bg: active ? "gray.100" : "whiteAlpha.200" }}
-        transition="all 0.2s"
-        cursor="pointer"
-    >
-        <Text fontSize="sm" fontWeight={active ? "bold" : "normal"}>{label}</Text>
-        {Icon && <Icon size={20} />}
-    </Flex>
-);
 
 const NavigationButtons = ({ currentTab, onNavigate }) => {
     const currentIndex = tabsOrder.indexOf(currentTab);
@@ -258,6 +243,43 @@ const QuestionsTab = ({ data, currentTab, onNavigate }) => {
     );
 };
 
+// Carousel Dots Component
+const CarouselDots = ({ currentTab, total, onDotClick, onNext, onPrev }) => {
+        const currentIndex = tabsOrder.indexOf(currentTab);
+    const activeColor = "#00BCD4";
+    const inactiveColor = useColorModeValue("#CBD5E0", "#4A5568");
+    
+    return (
+        <Flex 
+            align="center" 
+            justify="center" 
+            gap={4} 
+            mt={8}
+            direction="row"
+        >
+            
+            {/* Dots */}
+            <HStack gap={3}>
+                {Array.from({ length: total }).map((_, index) => (
+                    <Box
+                        key={index}
+                        w={index === currentIndex ? "32px" : "12px"}
+                        h="12px"
+                        borderRadius="full"
+                        bg={index === currentIndex ? activeColor : inactiveColor}
+                        cursor="pointer"
+                        onClick={() => onDotClick(index)}
+                        transition="all 0.3s ease"
+                        _hover={{ 
+                            transform: "scale(1.2)",
+                            bg: index === currentIndex ? activeColor : "#00BCD4"
+                        }}
+                    />
+                ))}
+            </HStack>
+        </Flex>
+    );
+};
 export default function LessonContentPage() {
     const params = useParams();
     const [activeTab, setActiveTab] = useState("video");
@@ -268,14 +290,24 @@ export default function LessonContentPage() {
     const buttonBorderColor = useColorModeValue("gray.200", "#4B5563");
     const headingColor = useColorModeValue("gray.800", "white");
     
-    const tabs = [
-        { id: "video", label: "الفيديو", icon: MdPlayCircle },
-        { id: "file", label: "الملف", icon: MdInsertDriveFile },
-        { id: "questions", label: "الأسئلة", icon: MdHelpOutline }
-    ];
 
     const handleNavigate = (tabId) => {
         setActiveTab(tabId);
+    };
+
+    // Carousel / dots handlers
+    const handleDotClick = (index) => {
+        setActiveTab(tabsOrder[index]);
+    };
+
+    const handleNext = () => {
+        const idx = tabsOrder.indexOf(activeTab);
+        if (idx < tabsOrder.length - 1) setActiveTab(tabsOrder[idx + 1]);
+    };
+
+    const handlePrev = () => {
+        const idx = tabsOrder.indexOf(activeTab);
+        if (idx > 0) setActiveTab(tabsOrder[idx - 1]);
     };
 
     const renderContent = () => {
@@ -319,37 +351,17 @@ export default function LessonContentPage() {
                         </Heading>
                     </Flex>
 
-                    {/* Tab Buttons - Left Side Navigation */}
-                    <Flex gap={{ base: 2, md: 3 }} mb={8} justify="flex-start" flexWrap="wrap">
-                        {tabs.map((tab) => (
-                            <Button
-                                key={tab.id}
-                                leftIcon={<tab.icon size={18} />}
-                                bg={activeTab === tab.id ? "#00BCD4" : buttonBg}
-                                color={activeTab === tab.id ? "white" : useColorModeValue("gray.600", "white")}
-                                borderRadius="xl"
-                                px={{ base: 3, md: 6 }}
-                                py={{ base: 1, md: 2 }}
-                                onClick={() => setActiveTab(tab.id)}
-                                _hover={{ 
-                                    bg: activeTab === tab.id ? "#00ACC1" : buttonHoverBg,
-                                    transform: "translateY(-1px)"
-                                }}
-                                transition="all 0.2s"
-                                fontSize={{ base: "xs", md: "sm" }}
-                                fontWeight="medium"
-                                border="1px solid"
-                                borderColor={activeTab === tab.id ? "#00BCD4" : buttonBorderColor}
-                            >
-                                {tab.label}
-                            </Button>
-                        ))}
-                    </Flex>
-
+                    <CarouselDots 
+                            currentTab={activeTab}
+                            total={tabsOrder.length}
+                            onNext={handleNext}
+                            onPrev={handlePrev}
+                        />
                     {/* Content Area */}
-                    <Box bg={bgColor} borderRadius="2xl" p={{ base: 3, md: 6 }} minH={{ base: "300px", md: "500px" }}>
+                    <Box bg={bgColor} borderRadius="2xl" mt={5} p={{ base: 3, md: 6 }} minH={{ base: "300px", md: "500px" }}>
                         {renderContent()}
                     </Box>
+                    
                 </Container>
             </Box>
         </Box>
