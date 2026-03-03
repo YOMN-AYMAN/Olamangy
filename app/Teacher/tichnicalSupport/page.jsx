@@ -103,14 +103,12 @@ export default function TechnicalSupport() {
             <Collapsible.Content>
               <Box p={4} bg="white">
                 <Text fontSize="sm" color="gray.600" lineHeight="tall">
-                  سياسة الخصوصية..
                 </Text>
               </Box>
             </Collapsible.Content>
           </Box>
         </Collapsible.Root>
 
-        {/* 3. كولابس شروط الخدمة */}
         <Collapsible.Root>
           <Box borderRadius="xl" overflow="hidden" border="1px solid #E2E8F0" bg="white" shadow="sm">
             <Collapsible.Trigger asChild>
@@ -137,7 +135,6 @@ export default function TechnicalSupport() {
             <Collapsible.Content>
               <Box p={4} bg="white">
                 <Text fontSize="sm" color="gray.600" lineHeight="tall">
-                  شروط الخدمة..
                 </Text>
               </Box>
             </Collapsible.Content>

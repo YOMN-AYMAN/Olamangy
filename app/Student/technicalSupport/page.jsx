@@ -99,7 +99,6 @@ export default function TechnicalSupport() {
                 <Collapsible.Content>
                 <Box p={4} bg="bg.muted">
                     <Text fontSize="sm" color="fg.muted" lineHeight="tall">
-                    سياسة الخصوصية..
                     </Text>
                 </Box>
                 </Collapsible.Content>
@@ -132,7 +131,6 @@ export default function TechnicalSupport() {
                 <Collapsible.Content>
                 <Box p={4} bg="bg.muted">
                     <Text fontSize="sm" color="fg.muted" lineHeight="tall">
-                    شروط الخدمة..
                     </Text>
                 </Box>
                 </Collapsible.Content>

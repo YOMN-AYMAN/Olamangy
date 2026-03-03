@@ -896,7 +896,6 @@ export default function Signup1() {
               </Flex>
               <Box minH="200px">
                 <Text color="gray.400" textAlign="center" mt={10} _dark={{color: "gray.500"}}>
-                  المحتوى قيد الإعداد...
                 </Text>
               </Box>
               <Button
