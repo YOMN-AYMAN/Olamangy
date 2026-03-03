@@ -1038,70 +1038,8 @@ export default function Signup1() {
         </Flex>
 
         {/* TERMS MODAL */}
-        {showTerms && (
-          <>
-            <Box
-              position="fixed"
-              top="50%"
-              left="50%"
-              transform="translate(-50%, -50%)"
-              bg="white"
-              p={6}
-              rounded="xl"
-              shadow="2xl"
-              w="90%"
-              maxW="500px"
-              maxH="80vh"
-              overflowY="auto"
-              zIndex={1000}
-              border="1px solid"
-              borderColor="gray.200"
-              _dark={{
-                bg: "gray.900",
-                borderColor: "gray.700"
-              }}
-            >
-              <Flex justify="space-between" align="center" mb={4} pb={3} borderBottom="1px solid" borderColor="gray.200" _dark={{borderColor: "gray.700"}}>
-                <Text fontWeight="bold" fontSize="lg" color={"#000"} _dark={{color: "white"}}>
-                  الشروط والأحكام
-                </Text>
-                <Text
-                  cursor="pointer"
-                  fontSize="xl"
-                  color="gray.500"
-                  _hover={{color: "gray.700"}}
-                  onClick={() => setShowTerms(false)}
-                  _dark={{color: "gray.400", _hover: {color: "gray.200"}}}
-                >
-                  ×
-                </Text>
-              </Flex>
-              <Box minH="200px">
-                <Text color="gray.400" textAlign="center" mt={10} _dark={{color: "gray.500"}}>
-                </Text>
-              </Box>
-              <Button
-                mt={4}
-                w="100%"
-                bg="#009EDB"
-                color="white"
-                onClick={() => setShowTerms(false)}
-              >
-                إغلاق
-              </Button>
-            </Box>
-            <Box
-              position="fixed"
-              top={0}
-              left={0}
-              right={0}
-              bottom={0}
-              bg="blackAlpha.600"
-              zIndex={999}
-              onClick={() => setShowTerms(false)}
-            />
-          </>
-        )}
+        {showTerms && <TermsModal onClose={() => setShowTerms(false)} />}
+
       </Flex>
     </Flex>
   )
