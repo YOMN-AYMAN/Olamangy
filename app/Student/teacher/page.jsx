@@ -1,84 +1,24 @@
 "use client"
 
-import { useState } from "react";
-import { Box, SimpleGrid, Image, Text, Flex, Badge, Button, Wrap, WrapItem, Center } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
+import { Box, SimpleGrid, Text, Flex, Badge, Button, Wrap, WrapItem, Center, Spinner, Avatar, Icon } from "@chakra-ui/react";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import Link from "next/link";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/auth/firebase";
+import { MdPerson } from "react-icons/md";
 
-// Mock teachers data array
-const mockTeachers = [
-    {
-        id: "1",
-        userId: "user1",
-        name: "أحمد محمد",
-        subjectId: "arabic",
-        subject: "اللغة العربية",
-        studentCount: 45,
-        photoURL: "https://i.pravatar.cc/300?img=12",
-    },
-    {
-        id: "2",
-        userId: "user2",
-        name: "فاطمة علي",
-        subjectId: "english",
-        subject: "اللغة الإنجليزية",
-        studentCount: 38,
-        photoURL: "https://i.pravatar.cc/300?img=5",    },
-    {
-        id: "3",
-        userId: "user3",
-        name: "محمود حسن",
-        subjectId: "math",
-        subject: "الرياضيات",
-        studentCount: 52,
-        photoURL: "https://i.pravatar.cc/300?img=12",
-        },
-    {
-        id: "4",
-        userId: "user4",
-        name: "سارة أحمد",
-        subjectId: "physics",
-        subject: "الفيزياء",
-        studentCount: 31,
-        photoURL: "https://i.pravatar.cc/300?img=5",
-    },
-    {
-        id: "5",
-        userId: "user5",
-        name: "خالد عبدالله",
-        subjectId: "chemistry",
-        subject: "الكيمياء",
-        studentCount: 29,
-        photoURL: "https://i.pravatar.cc/300?img=12",
-    },
-    {
-        id: "6",
-        userId: "user6",
-        name: "نور الدين",
-        subjectId: "math",
-        subject: "الرياضيات",
-        studentCount: 42,
-        photoURL: "https://i.pravatar.cc/300?img=12",
-    },
-    {
-        id: "7",
-        userId: "user7",
-        name: "ليلى حسين",
-        subjectId: "history",
-        subject: "التاريخ",
-        studentCount: 35,
-        photoURL: "https://i.pravatar.cc/300?img=5",
-    },
-    {
-        id: "8",
-        userId: "user8",
-        name: "عمر سالم",
-        subjectId: "geography",
-        subject: "الجغرافيا",
-        studentCount: 28,
-        photoURL: "https://i.pravatar.cc/300?img=12",
-    }
-];
+// teacher example for testing
+const mockTeacherExample = {
+    id: "1",
+    userId: "example-user-1",
+    name: "أحمد محمد",
+    subjectId: "math",
+    subject: "الرياضيات",
+    studentCount: 45,
+    photoURL: "", 
+};
 
 const TeacherCard = ({ teacher }) => {
     const cardBg = useColorModeValue("white", "#1A202C");
@@ -102,15 +42,20 @@ const TeacherCard = ({ teacher }) => {
                 position="relative"
             >
                 <Flex align="center" gap={{ base: 3, md: 4 }} justify="space-between">
-                    {/* Right Side - Profile Image */}
-                    <Image 
-                        src={teacher.photoURL || "https://i.pravatar.cc/300?u=default"} 
-                        borderRadius="full" 
-                        boxSize={{ base: "60px", md: "80px" }}
-                        objectFit="cover" 
-                        alt={teacher.name}
-                        flexShrink={0}
-                    />
+                    {/* Right Side - Profile Image with fallback */}
+                    <Avatar.Root 
+                        size="xl"
+                        bg={!teacher.photoURL ? "gray.200" : undefined}
+                        color={!teacher.photoURL ? "gray.500" : undefined}
+                    >
+                        {teacher.photoURL ? (
+                            <Avatar.Image src={teacher.photoURL} />
+                        ) : (
+                            <Avatar.Fallback>
+                                <Icon as={MdPerson} boxSize={8} />
+                            </Avatar.Fallback>
+                        )}
+                    </Avatar.Root>
                     
                     {/* Left Side - Text Content */}
                     <Flex direction="column" gap={2} flex="1" minW={0}>
@@ -223,7 +168,8 @@ const VISIBLE_COUNT = 8;
 export default function Teachers() {
     const [showAll, setShowAll] = useState(false);
     const [selectedSubject, setSelectedSubject] = useState("all");
-    const [teachers] = useState(mockTeachers);
+    const [teachers, setTeachers] = useState([]);
+    const [loading, setLoading] = useState(true);
     
     const pageBg = useColorModeValue("#FAFAFA", "#0F172A");
     const buttonBg = useColorModeValue("white", "#2D3748");
@@ -232,7 +178,88 @@ export default function Teachers() {
     const buttonTextColor = useColorModeValue("gray.700", "white");
     const moreButtonBg = useColorModeValue("black", "#2D3748");
     const moreButtonHoverBg = useColorModeValue("gray.800", "#374151");
-    const noResultsTextColor = useColorModeValue("gray.500", "gray.400");
+
+    // Fetch student's teachers from Firebase
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const db = getDatabase();
+                
+                const studentRef = ref(db, `users/${user.uid}`);
+                onValue(studentRef, (studentSnapshot) => {
+                    const studentData = studentSnapshot.val();
+                    
+                    if (studentData && studentData.teacherIds) {
+                        // Convert teacherIds to array (handles both object and array formats)
+                        let teacherIdsArray = [];
+                        
+                        if (Array.isArray(studentData.teacherIds)) {
+                            teacherIdsArray = studentData.teacherIds;
+                        } else if (typeof studentData.teacherIds === 'object') {
+                            teacherIdsArray = Object.values(studentData.teacherIds);
+                        }
+                        
+                        if (teacherIdsArray.length === 0) {
+                            setTeachers([]);
+                            setLoading(false);
+                            return;
+                        }
+                        
+                        // Fetch each teacher's details from both teachers and users nodes
+                        const teacherPromises = teacherIdsArray.map((teacherId) => {
+                            return new Promise((resolve) => {
+                                // First get teacher data (subject, totalStudents) from teachers node
+                                const teacherRef = ref(db, `teachers/${teacherId}`);
+                                onValue(teacherRef, (teacherSnapshot) => {
+                                    const teacherData = teacherSnapshot.val();
+                                    
+                                    if (teacherData) {
+                                        // Then get user data (name, avatar) from users node
+                                        const userRef = ref(db, `users/${teacherId}`);
+                                        onValue(userRef, (userSnapshot) => {
+                                            const userData = userSnapshot.val();
+                                            
+                                            resolve({
+                                                id: teacherId,
+                                                userId: teacherId,
+                                                name: userData?.fullName || "مدرس",
+                                                subjectId: teacherData.subjectId || "unknown",
+                                                subject: subjectNames[teacherData.subjectId] || "مادة غير محددة",
+                                                studentCount: teacherData.totalStudents || 0,
+                                                photoURL: userData?.avatar || "",
+                                            });
+                                        }, { onlyOnce: true });
+                                    } else {
+                                        resolve(null);
+                                    }
+                                }, { onlyOnce: true });
+                            });
+                        });
+                        
+                        Promise.all(teacherPromises).then((fetchedTeachers) => {
+                            const validTeachers = fetchedTeachers.filter(t => t !== null);
+                            // example for testing
+                            setTeachers([mockTeacherExample, ...validTeachers]);
+                            setLoading(false);
+                        });
+                    } else {
+                        //  example
+                        setTeachers([mockTeacherExample]);
+                        setLoading(false);
+                    }
+                }, (error) => {
+                    console.error("Error fetching student data:", error);
+                    //  example on error
+                    setTeachers([mockTeacherExample]);
+                    setLoading(false);
+                });
+            } else {
+                setLoading(false);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     // Filter teachers by selected subject
     const filteredTeachers = selectedSubject === "all" 
@@ -241,6 +268,14 @@ export default function Teachers() {
 
     const visibleSubjects = showAll ? allSubjects : allSubjects.slice(0, VISIBLE_COUNT);
     const hasMore = allSubjects.length > VISIBLE_COUNT;
+
+    if (loading) {
+        return (
+            <Center h="100vh" bg={pageBg}>
+                <Spinner size="xl" color="#00A3E0" />
+            </Center>
+        );
+    }
 
     return (
         <>
