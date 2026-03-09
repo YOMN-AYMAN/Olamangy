@@ -38,7 +38,7 @@ function TeacherSideBar() {
 
   const navLinks = [
     {name: "الرئيسية", href: "/Teacher/home", icon: MdDashboard},
-    {name: "الفيديوهات", href: "/Teacher/videos", icon: MdPlayCircleOutline},
+    {name: "الدروس", href: "/Teacher/lessons", icon: MdPlayCircleOutline},
     {name: "الاشتراكات", href: "/Teacher/subscription", icon: MdCardMembership},
     {name: "الحضور و الغياب", href: "/Teacher/attendanceAndAbsence", icon: MdHowToReg},
     {name: "الطلاب", href: "/Teacher/students", icon: MdPeopleOutline},

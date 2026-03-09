@@ -84,10 +84,7 @@ export default function AllLessons() {
           direction={{base: "column", md: "row"}}
           gap={6}
         >
-          <HStack gap={3}>
-            <Icon as={MdVideoLibrary} boxSize={8} color="blue.500" />
-            <Heading size={{base: "lg", md: "xl"}}>الدروس المتاحة</Heading>
-          </HStack>
+
 
           <Box position="relative" w={{base: "100%", md: "350px"}}>
             <Input
@@ -118,7 +115,7 @@ export default function AllLessons() {
             <HStack gap={2}>
               <Icon as={MdVideoLibrary} color="blue.500" boxSize={5} />
               <Text fontWeight="bold" fontSize="lg">
-                جميع الفيديوهات
+                جميع الدروس
               </Text>
             </HStack>
             <Box p={0}>
@@ -172,7 +169,7 @@ export default function AllLessons() {
           ) : filteredLessons.length > 0 ? (
             <SimpleGrid columns={{base: 1, sm: 2, lg: 3, xl: 4}} gap={6}>
               {filteredLessons.map((lesson) => (
-                <Link href={`/Teacher/videos/${lesson.id}`} key={lesson.id}>
+                <Link href={`/Teacher/lessons/${lesson.id}`} key={lesson.id}>
                   <Card.Root
                     overflow="hidden"
                     shadow="sm"
@@ -186,7 +183,7 @@ export default function AllLessons() {
                       <VStack gap={4} align="stretch">
                         <Avatar.Root shape="rounded" size="full" h="160px">
                           <Avatar.Image
-                            src={lessonImage}
+                            src={lesson?.image}
                             style={{objectFit: "cover"}}
                           />
                         </Avatar.Root>

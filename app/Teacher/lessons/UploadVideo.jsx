@@ -44,10 +44,7 @@ const academicYears = {
   ]
 }
 
-const semesters = [
-  {value: "1", label: "الترم الأول"},
-  {value: "2", label: "الترم الثاني"},
-]
+
 
 export default function UploadVideo() {
   const router = useRouter()
@@ -57,10 +54,9 @@ export default function UploadVideo() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    videoUrl: "", // Added videoUrl
     academicStage: "",
     academicYear: "",
-    semester: "1",
+
   })
   const handleChange = (field, value) => {
     setFormData(prev => ({
@@ -88,11 +84,10 @@ export default function UploadVideo() {
       return
     }
 
-    const {title, academicStage, academicYear, videoUrl} = formData
-    if (!title || !academicStage || !academicYear || !videoUrl) {
+    const {title, academicStage, academicYear} = formData
+    if (!title || !academicStage || !academicYear ) {
       const missing = []
       if (!title) missing.push("العنوان")
-      if (!videoUrl) missing.push("رابط الفيديو")
       if (!academicStage) missing.push("المرحلة")
       if (!academicYear) missing.push("السنة الدراسية")
 
@@ -107,7 +102,7 @@ export default function UploadVideo() {
 
     setLoading(true)
     try {
-      const academicKey = formData.academicStage.slice(0, 3) + formData.academicYear + formData.semester
+      const academicKey = formData.academicStage.slice(0, 3) + formData.academicYear
       const lessonsRef = ref(rtdb, `teachers/${user.uid}/lessons/${academicKey}`)
       const newLessonRef = push(lessonsRef)
       const lessonId = newLessonRef.key
@@ -128,7 +123,6 @@ export default function UploadVideo() {
             type: "video",
             title: formData.title,
             description: formData.description,
-            videoUrl: formData.videoUrl || "",
             createdAt: new Date().toISOString()
           }
         ]
@@ -218,20 +212,6 @@ export default function UploadVideo() {
             />
           </Box>
 
-          <Box>
-            <HStack mb={2} gap={2}>
-              <Icon as={MdLink} color="gray.500" />
-              <Text fontSize="sm" fontWeight="semibold">رابط الفيديو (YouTube) *</Text>
-            </HStack>
-            <Input
-              placeholder="https://www.youtube.com/watch?v=..."
-              value={formData.videoUrl}
-              onChange={(e) => handleChange("videoUrl", e.target.value)}
-              borderRadius="xl"
-              bg="bg.muted"
-              _focus={{borderColor: "blue.400", bg: "bg.panel"}}
-            />
-          </Box>
           <HStack gap={4} width="100%">
             <Box flex={1}>
               <HStack mb={2} gap={2}>
@@ -291,31 +271,6 @@ export default function UploadVideo() {
             </Box>
           </HStack>
 
-          <Box>
-            <Text fontSize="sm" fontWeight="semibold" mb={2}>الفصل الدراسي</Text>
-            <NativeSelect.Root
-              _focus={{
-                borderColor: "blue.500",
-                boxShadow: "0 0 0 1px #3182ce"
-              }}
-              display={"flex"}
-              alignItems={"center"} bg={"bg.panel"}
-              border={"1px solid"}
-              borderColor={"blue.400"}
-              borderRadius="lg" >
-              <NativeSelect.Field border="none" px={3}
-                name="semester"
-                value={formData?.semester ?? ""}
-                onChange={(e) => handleChange("semester", e.target.value)}
-              >
-                <option value="">اختر الترم</option>
-                {semesters?.map((c, indx) => (
-                  <option style={{padding: 20}} key={indx} value={c.value}>{c.label}</option>
-                ))}
-              </NativeSelect.Field>
-              <NativeSelect.Indicator />
-            </NativeSelect.Root>
-          </Box>
         </Stack>
 
         <Button

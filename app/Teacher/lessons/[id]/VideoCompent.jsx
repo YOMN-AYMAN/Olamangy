@@ -1,8 +1,8 @@
 "use client";
-import {Box, Text, VStack, SimpleGrid, Icon, Input, Progress, Button} from '@chakra-ui/react'
+import {Box, Text, VStack, HStack, SimpleGrid, Icon, Input, Progress, Button, Image} from '@chakra-ui/react'
 import {toaster} from "@/components/ui/toaster"
 import React, {useState, useRef} from 'react'
-import {LuUpload, LuVideo, LuImage} from 'react-icons/lu';
+import {LuUpload, LuVideo, LuImage, LuEye} from 'react-icons/lu';
 import {MdCheckCircle} from 'react-icons/md';
 import {getUploadLink, uploadVideo} from '@/components/ui/UploadVideo';
 import {uploadFileToB2} from '@/components/ui/UploadImg';
@@ -60,7 +60,7 @@ function VideoCompent({lesson, path, currentPart, teacherId, partIndex}) {
 
 
       // 3. Save to Firebase
-      if (lesson.id && teacherId ) {
+      if (lesson.id && teacherId) {
         const pageRef = ref(rtdb, `teachers/${teacherId}/lessons/${path}/${lesson.id}/pages/${partIndex}`);
 
         const pageData = {
@@ -72,7 +72,7 @@ function VideoCompent({lesson, path, currentPart, teacherId, partIndex}) {
           updatedAt: new Date().toISOString()
         };
         await update(pageRef, pageData);
-        console.log("تم الرفع والحفظ بنجاح"); 
+        console.log("تم الرفع والحفظ بنجاح");
       }
 
       toaster.create({
@@ -113,7 +113,7 @@ function VideoCompent({lesson, path, currentPart, teacherId, partIndex}) {
               borderRadius="xl"
             />
           </VStack>
-          <SimpleGrid columns={{base: 1, md: 2}} gap={6}>
+          <SimpleGrid columns={{base: 1, md: 1}} gap={6}>
             {/* Video Upload Card */}
             <Box
               onClick={() => videoInputRef.current.click()}
@@ -164,55 +164,7 @@ function VideoCompent({lesson, path, currentPart, teacherId, partIndex}) {
               </VStack>
             </Box>
 
-            {/* Image Upload Card */}
-            <Box
-              onClick={() => imageInputRef.current.click()}
-              cursor="pointer"
-              bg="bg.panel"
-              _dark={{
-                bg: "bg.panel",
-                border: "1px solid",
-                borderColor: "whiteAlpha.100"
-              }}
-              borderRadius="35px"
-              height="180px"
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              justifyContent="center"
-              transition="all 0.3s ease"
-              _hover={{
-                transform: "translateY(-5px)",
-                boxShadow: "0 15px 35px -10px rgba(0, 0, 0, 0.12)",
-                borderColor: "pink.200"
-              }}
-              boxShadow="0 8px 20px -6px rgba(0, 0, 0, 0.06)"
-              border="1px solid"
-              borderColor={imageFile ? "pink.400" : "gray.100"}
-              bgGradient="linear(to-b, #fdfdff, #f5f8ff)"
-              position="relative"
-            >
-              <input
-                type="file"
-                accept="image/*"
-                ref={imageInputRef}
-                style={{display: 'none'}}
-                onChange={handleImageSelect}
-              />
-              <VStack gap={2}>
-                <Box mb={1}>
-                  <Icon as={imageFile ? MdCheckCircle : LuImage} boxSize={10} color="rgb(255, 68, 102)" />
-                </Box>
-                <Text fontWeight="extrabold" fontSize="md" color="rgb(255, 68, 102)" dir="rtl">
-                  {imageFile ? imageFile.name : "اسحب الصورة هنا"}
-                </Text>
-                {imageProgress > 0 && imageProgress < 100 && (
-                  <Progress.Root value={imageProgress} width="120px" size="xs" colorPalette="pink">
-                    <Progress.Track />
-                  </Progress.Root>
-                )}
-              </VStack>
-            </Box>
+
           </SimpleGrid>
           <Button
             mt={8}
@@ -228,16 +180,61 @@ function VideoCompent({lesson, path, currentPart, teacherId, partIndex}) {
             بدء الرفع
           </Button>
         </>)}
-        {currentPart && (
-          <>
-            <Text fontWeight="extrabold" fontSize="md" color="rgb(255, 68, 102)" dir="rtl">
+      {currentPart && (
+        <VStack align="stretch" gap={4}>
+          <Box width="100%"  overflow="hidden">
+            {/* Bunny.net iframe player */}
+            {currentPart.videoUrl && (
+              <Box
+                position="relative"
+                width="100%"
+                pb="56.25%"
+                height={0}
+                overflow="hidden"
+                borderRadius="2xl"
+                boxShadow="0 8px 30px -8px rgba(0,0,0,0.25)"
+              >
+                <iframe
+                  src={`https://iframe.mediadelivery.net/embed/595363/${currentPart.videoUrl}?autoplay=false&loop=false&muted=false&preload=true`}
+                  title={currentPart.title || "فيديو الدرس"}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    border: "none",
+                  }}
+                  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                />
+              </Box>
+            )}
+          </Box>
+          {/* Title + Views row */}
+          <HStack justify="space-between" align="center" dir="rtl">
+            <Text fontWeight="extrabold" fontSize="lg" color="rgb(255, 68, 102)">
               {currentPart.title}
             </Text>
-            <Text fontWeight="extrabold" fontSize="md" color="rgb(255, 68, 102)" dir="rtl">
+            {currentPart.views !== undefined && (
+              <HStack gap={1} color="gray.400" flexShrink={0}>
+                <Icon as={LuEye} boxSize={4} />
+                <Text fontSize="sm" fontWeight="semibold">
+                  {Number(currentPart.views).toLocaleString("ar-EG")}
+                </Text>
+              </HStack>
+            )}
+          </HStack>
+
+          {/* Description */}
+          {currentPart.description && (
+            <Text fontSize="sm" color="gray.500" dir="rtl">
               {currentPart.description}
             </Text>
-          </>
-        )}
+          )}
+
+        </VStack>
+      )}
     </Box>
   )
 }
