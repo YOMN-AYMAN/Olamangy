@@ -46,13 +46,12 @@ function DeveSideBar() {
   return (
     <Box
       as="aside"
-      w={{base: "85px", md: "20%"}}
       h="100vh"
-      position="fixed"
+      position="sticky"
       right="0"
       top="0"
       zIndex="10"
-      backgroundImage={`linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${imagePath})`}
+      backgroundImage={`linear-gradient(rgba(0, 0, 0, 0.9), rgba(17, 17, 17, 0.9)), url(${imagePath})`}
       backgroundSize="cover"
       backgroundPosition="center"
       color="white"

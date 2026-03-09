@@ -3,7 +3,6 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import Navbar from "@/components/ui/Navbar";
 import { Table, Badge, Box, Flex, Text, Icon, Spinner, Center, Menu, HStack, VStack} from "@chakra-ui/react";
 import { 
     DialogRoot, DialogContent, DialogHeader, DialogBody, DialogTitle, DialogCloseTrigger, DialogTrigger 
@@ -71,7 +70,6 @@ export default function Students() {
     if (loading) {
         return (
             <>
-                <Navbar />
                 <Center py={20}><Spinner size="xl" color="#00A3E0" /></Center>
             </>
         );
@@ -79,10 +77,8 @@ export default function Students() {
 
     return (
         <>
-            <Navbar />
-
             <Box 
-                bg="#fff" 
+                bg="bg.subtle" 
                 p={{ base: "4", md: "6" }} 
                 borderRadius="2xl" 
                 shadow="sm" 
@@ -94,14 +90,14 @@ export default function Students() {
             >
                 <Flex align="center" gap="2" mb="6">
                     <Icon as={MdPeople} fontSize="24px" color="gray.500" />
-                    <Text fontWeight="bold" fontSize="lg" color="black">الطلاب المسجلين</Text>
+                    <Text fontWeight="bold" fontSize="lg" color="fg.subtle">الطلاب المسجلين</Text>
                     <Badge colorPalette="gray" variant="subtle" ml={2} p={1}>
                         {students.length} طالب
                     </Badge>
                 </Flex>
 
                 {students.length === 0 ? (
-                    <Center py={10}><Text color="gray.500">لا يوجد طلاب مسجلين</Text></Center>
+                    <Center py={10}><Text color="fg.subtle">لا يوجد طلاب مسجلين</Text></Center>
                 ) : (
                     <Table.Root size="md" variant="line" interactive>
                         <Table.Header>
@@ -156,15 +152,15 @@ export default function Students() {
                                                     </DialogContent>
                                                 </DialogRoot>
                                             ) : (
-                                                <Text fontWeight="bold" color="gray.800">
+                                                <Text fontWeight="bold" color="gray.700">
                                                     {st.name}
                                                 </Text>
                                             )}
                                         </Table.Cell>
 
-                                        <Table.Cell textAlign="center" hideBelow="md" color="black">{st.lectures}</Table.Cell>
-                                        <Table.Cell textAlign="center" hideBelow="md" dir="ltr" color="black">{st.phone}</Table.Cell>
-                                        <Table.Cell textAlign="center" hideBelow="md" color="gray.500" fontSize="sm">{st.email}</Table.Cell>
+                                        <Table.Cell textAlign="center" hideBelow="md" color="fg.subtle">{st.lectures}</Table.Cell>
+                                        <Table.Cell textAlign="center" hideBelow="md" dir="ltr" color="fg.subtle">{st.phone}</Table.Cell>
+                                        <Table.Cell textAlign="center" hideBelow="md" color="fg.subtle" fontSize="sm">{st.email}</Table.Cell>
 
                                         <Table.Cell textAlign="center">
                                             <Menu.Root>

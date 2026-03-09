@@ -1,20 +1,29 @@
 
 import DeveSideBar from "@/components/developerSideBar"
-import { Box, Flex } from "@chakra-ui/react"
+import Navbar from "@/components/ui/Navbar"
+import {Box, Flex} from "@chakra-ui/react"
 
-export default function DeveloperLayout({ children }) {
+export default function TeacherLayout({children}) {
     return (
-        <Flex dir="rtl">
+        <Box width={"100%"} display={"flex"} bg={"bg.canvas"} >
+        <Box position={"relative"} w={{base: "85px", md: "20%"}}>
             <DeveSideBar />
 
-            <Box 
-                as="main"
-                flex="1" 
-                mr="20%" 
-                minH="100vh"
-            >
-                {children}
+        </Box>
+        <Box width={"100%"} overflow="hidden" display={"flex"} flexDirection={"column"}>
+            <Box mr={-5}>
+            <Navbar />
             </Box>
-        </Flex>
+            <Box
+            as="main"
+            flex="1"
+            minH="100vh"
+            bg="bg.canvas"
+            transition="background 0.3s ease"
+            >
+            {children}
+            </Box>
+        </Box>
+        </Box>
     )
 }

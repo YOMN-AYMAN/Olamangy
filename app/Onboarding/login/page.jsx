@@ -189,7 +189,7 @@ export default function LoginPage() {
   }
 
   return (
-    <Flex direction="column" minH="100vh" bg="#f7f9fc">
+    <Flex direction="column" minH="100vh" bg="bg.canvas">
 
       <Flex direction="column" align="center" mt={10} px={4}>
 
@@ -204,7 +204,7 @@ export default function LoginPage() {
         </Box>
 
         {/* CARD */}
-        <Box bg="white" p={10} rounded="2xl" shadow="lg" w="100%" maxW="600px">
+        <Box bg="bg.panel" p={10} rounded="2xl" shadow="lg" w="100%" maxW="600px" borderWidth="1px" borderColor="border.DEFAULT">
           <VStack spacing={6} align="stretch">
 
             {errorMessage && (
@@ -215,40 +215,43 @@ export default function LoginPage() {
 
             {/* EMAIL */}
             <Box>
-              <Flex align="center" mb={1}>
-                <MdEmail color="#000" size={24} style={{marginRight: 6}} />
-                <Text fontWeight="medium" color="#000">البريد الإلكتروني</Text>
-              </Flex>
+              <Flex align="center" mb={1} color={{ base: "black", _dark: "white" }}>
+  <MdEmail size={24} style={{marginRight: 6}} />
+  <Text fontWeight="medium">البريد الإلكتروني</Text>
+</Flex>
               <Input
-                bg="white"
+                bg="bg.subtle"
                 rounded="lg"
                 px={4}
                 py={3}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@gmail.com"
-                color="#535353b4"
+                color={{ base: "black", _dark: "fg.muted" }}
+                borderColor="border.DEFAULT"
+                _placeholder={{color: "fg.subtle"}}
               />
             </Box>
 
             <Box>
-              <Flex align="center" mb={1}>
-                <MdLock color="#000" size={24} style={{marginRight: 6}} />
-                <Text fontWeight="medium" color="#000">كلمة المرور</Text>
-              </Flex>
+              <Flex align="center" mb={1} color={{ base: "black", _dark: "white" }}>
+  <MdLock size={24} style={{marginRight: 6}} />
+  <Text fontWeight="medium">كلمة المرور</Text>
+</Flex>
 
               <Box position="relative">
                 <Input
-                  bg="white"
+                  bg="bg.subtle"
                   rounded="lg"
                   px={4}
                   py={3}
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  color="#535353b4"
+                  color={{ base: "black", _dark: "fg.muted" }}
                   placeholder="********"
-                  _placeholder={{color: "#a0aec0"}}
+                  borderColor="border.DEFAULT"
+                  _placeholder={{color: "fg.subtle"}}
                 />
                 <Box
                   position="absolute"
@@ -256,10 +259,11 @@ export default function LoginPage() {
                   left="12px"
                   transform="translateY(-50%)"
                   cursor="pointer"
+                  color="fg.subtle"
                 >
                   {showPassword
-                    ? <MdVisibilityOff size={20} color="#aaa9a9" onClick={() => setShowPassword(false)} />
-                    : <MdVisibility size={20} color="#aaa9a9" onClick={() => setShowPassword(true)} />}
+                    ? <MdVisibilityOff size={20} onClick={() => setShowPassword(false)} />
+                    : <MdVisibility size={20} onClick={() => setShowPassword(true)} />}
                 </Box>
               </Box>
             </Box>
@@ -295,11 +299,11 @@ export default function LoginPage() {
             </Button>
 
             <Flex align="center" justify="center" gap={4}>
-              <Separator flex="1" />
-              <Text color="#666" fontSize="sm" whiteSpace="nowrap">
+              <Separator flex="1" borderColor="border.DEFAULT" />
+              <Text color="fg.subtle" fontSize="sm" whiteSpace="nowrap">
                 أو
               </Text>
-              <Separator flex="1" />
+              <Separator flex="1" borderColor="border.DEFAULT" />
             </Flex>
 
             {/* CUSTOM GOOGLE BUTTON */}
@@ -312,16 +316,18 @@ export default function LoginPage() {
               onClick={handleGoogleLogin}
               loading={loading}
               disabled={loading}
-              bg="white"
-              _hover={{bg: "#f9f9f9"}}
-              _active={{bg: "#f1f1f1"}}
-              border="1px solid #ddd"
+              bg="bg.panel"
+              color="fg.DEFAULT"
+              _hover={{bg: "bg.subtle"}}
+              _active={{bg: "bg.muted"}}
+              border="1px solid"
+              borderColor="border.DEFAULT"
               p={4}
               cursor="pointer"
               transition="all 0.2s"
             >
               <HStack gap={3} justify="center" w="100%">
-                <Text color="#333" fontWeight="medium">
+                <Text fontWeight="medium">
                   تسجيل الدخول باستخدام جوجل
                 </Text>
                 {/* Google SVG Icon */}
@@ -351,7 +357,7 @@ export default function LoginPage() {
 
         {/* SIGN UP */}
         <Flex mt={8} justify="center" align="center" gap={2} fontSize="lg" fontWeight="bold">
-          <Text color="#333">
+          <Text color="fg.muted">
             لا تمتلك حساب بعد؟
           </Text>
           <Link href="/Onboarding/signup1">

@@ -172,12 +172,6 @@ const countryCodes = [
 ]
 
 
-
-
-
-
-
-
 export default function SettingsPage() {
   const [isEditing, setIsEditing] = useState(false);
   const {user} = useAuth()

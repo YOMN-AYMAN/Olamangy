@@ -59,9 +59,8 @@ export default function ForgotPasswordPage() {
       setLoading(false)
     }
   }
-
-  return (
-    <Flex direction="column" minH="100vh" bg="#f7f9fc">
+   return (
+    <Flex direction="column" minH="100vh" bg="#f7f9fc" _dark={{bg: "gray.950"}}>
 
       <Flex direction="column" align="center" mt={10} px={4}>
 
@@ -76,7 +75,7 @@ export default function ForgotPasswordPage() {
         </Box>
 
         {/* CARD */}
-        <Box bg="white" p={10} rounded="2xl" shadow="lg" w="100%" maxW="600px">
+        <Box bg="white" p={10} rounded="2xl" shadow="lg" w="100%" maxW="600px" _dark={{bg: "gray.900"}}>
           <VStack spacing={6} align="stretch">
 
             {/* Back Button */}
@@ -87,24 +86,25 @@ export default function ForgotPasswordPage() {
                 onClick={() => router.push("/Onboarding/login")}
                 color="gray.600"
                 _hover={{ color: "#009EDB" }}
+                _dark={{color: "gray.400", _hover: {color: "#009EDB"}}}
               >
                 العودة لتسجيل الدخول
               </Button>
             </Flex>
 
             {/* Title */}
-            <Text fontSize="2xl" fontWeight="bold" textAlign="center" color="#000">
+            <Text fontSize="2xl" fontWeight="bold" textAlign="center" color="#000" _dark={{color: "white"}}>
               استعادة كلمة المرور
             </Text>
 
             {/* Description */}
-            <Text textAlign="center" color="gray.600" fontSize="sm">
+            <Text textAlign="center" color="gray.600" fontSize="sm" _dark={{color: "gray.400"}}>
               أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور
             </Text>
 
             {/* Success Message */}
             {emailSent && (
-              <Box bg="green.50" color="green.600" p={4} rounded="md" textAlign="center">
+              <Box bg="green.50" color="green.600" p={4} rounded="md" textAlign="center" _dark={{bg: "green.900", color: "green.200"}}>
                 <Text fontWeight="medium">{message}</Text>
                 <Text fontSize="sm" mt={2}>
                   يرجى التحقق من بريدك الإلكتروني (بما في ذلك مجلد الرسائل غير المرغوب فيها)
@@ -114,7 +114,7 @@ export default function ForgotPasswordPage() {
 
             {/* Error Message */}
             {errorMessage && (
-              <Box bg="red.50" color="red.500" p={3} rounded="md">
+              <Box bg="red.50" color="red.500" p={3} rounded="md" _dark={{bg: "red.900", color: "red.200"}}>
                 {errorMessage}
               </Box>
             )}
@@ -122,9 +122,9 @@ export default function ForgotPasswordPage() {
             {/* Email Input - Hidden if email already sent */}
             {!emailSent && (
               <Box>
-                <Flex align="center" mb={1}>
-                  <MdEmail color="#000" size={24} style={{ marginRight: 6 }} />
-                  <Text fontWeight="medium" color="#000">البريد الإلكتروني</Text>
+                <Flex align="center" mb={1} color="#000" _dark={{color: "white"}}>
+                  <MdEmail color="currentColor" size={24} style={{ marginRight: 6 }} />
+                  <Text fontWeight="medium">البريد الإلكتروني</Text>
                 </Flex>
                 <Input
                   bg="white"
@@ -135,7 +135,13 @@ export default function ForgotPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="example@gmail.com"
-                  color="#535353b4"
+                  color="#535353"
+                  _dark={{
+                    bg: "gray.800",
+                    color: "white",
+                    borderColor: "gray.700",
+                    _placeholder: {color: "gray.400"}
+                  }}
                 />
               </Box>
             )}
@@ -169,7 +175,7 @@ export default function ForgotPasswordPage() {
 
             {/* Resend Option */}
             {emailSent && (
-              <Text textAlign="center" fontSize="sm">
+              <Text textAlign="center" fontSize="sm" color="gray.600" _dark={{color: "gray.400"}}>
                 لم تستلم البريد؟{" "}
                 <Text
                   as="span"

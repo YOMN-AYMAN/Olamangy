@@ -1,4 +1,3 @@
-
 "use client"
 import { Box, VStack, Text, Stack, HStack, Avatar, Icon } from "@chakra-ui/react"
 import Link from "next/link"
@@ -13,12 +12,16 @@ import {
     MdForum, 
     MdSupportAgent, 
     MdSettings,
-    MdLogout
+    MdLogout,
+    MdPerson
 } from "react-icons/md";
 import { auth } from "@/auth/firebase"
 import { signOut } from "firebase/auth"
+import { getDatabase, ref, onValue } from "firebase/database"
+import { onAuthStateChanged } from "firebase/auth"
 import { Tooltip } from "@/components/ui/tooltip"
 import { useBreakpointValue } from "@chakra-ui/react"
+import { useState, useEffect } from "react"
 
 const MotionBox = motion(Box)
 
@@ -27,14 +30,37 @@ function StudentSideBar() {
     const router = useRouter()
     const imagePath = "/30175cee-8911-4d80-937d-9c90cc5e9f94.jpg"
     const isMini = useBreakpointValue({ base: true, md: false })
+    
+    // State for user data
+    const [studentName, setStudentName] = useState("")
+    const [studentAvatar, setStudentAvatar] = useState("")
+    const [loading, setLoading] = useState(true)
 
-    const users = [
-        {
-            id: "1",
-            name: "محمود على",
-            avatar: "https://i.pravatar.cc/300?u=iu",
-        },
-    ]
+    // Fetch user data from Realtime Database
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const db = getDatabase()
+                const userRef = ref(db, `users/${user.uid}`)
+                
+                onValue(userRef, (snapshot) => {
+                    const data = snapshot.val()
+                    if (data) {
+                        setStudentName(data.fullName || "طالب")
+                        setStudentAvatar(data.avatar || "")
+                    }
+                    setLoading(false)
+                }, (error) => {
+                    console.error("Error fetching user data:", error)
+                    setLoading(false)
+                })
+            } else {
+                setLoading(false)
+            }
+        })
+
+        return () => unsubscribe()
+    }, [])
 
     const navLinks = [
         { name: "الرئيسية", href: "/Student/home", icon: MdDashboard },
@@ -58,17 +84,15 @@ function StudentSideBar() {
     return (
         <Box 
             as="aside"
-            w={{ base: "85px", md: "20%" }} 
             h="100vh"
-            position="static"
+            position="sticky"
             right="0"
             top="0"
             zIndex="10"
-            backgroundImage={`linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${imagePath})`}
+            backgroundImage={`linear-gradient(rgba(0, 0, 0, 0.9), rgba(17, 17, 17, 0.9)), url(${imagePath})`}
             backgroundSize="cover"
             backgroundPosition="center"
             color="white"
-            dir="rtl"
             borderRadius="30px 0 0 30px"
             transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
         >
@@ -83,22 +107,30 @@ function StudentSideBar() {
                         w="100%"
                         align="center"
                     >
-                        {users.map((user) => (
-                            <HStack key={user.id} gap="3" justify="center">
-                                <Avatar.Root size={isMini ? "sm" : "md"}>
-                                    <Avatar.Image src={user.avatar} />
-                                </Avatar.Root>
-                                
-                                {!isMini && (
-                                    <Stack gap="0" align="flex-start">
-                                        <Text fontSize="xs">أهلا</Text>
-                                        <Text fontWeight="bold" fontSize="sm" color="gray.700" whiteSpace="nowrap">
-                                            {user.name}
-                                        </Text>
-                                    </Stack>
+                        <HStack gap="3" justify="center">
+                            <Avatar.Root 
+                                size={isMini ? "sm" : "md"}
+                                bg={!studentAvatar ? "gray.200" : undefined}
+                                color={!studentAvatar ? "gray.500" : undefined}
+                            >
+                                {studentAvatar ? (
+                                    <Avatar.Image src={studentAvatar} />
+                                ) : (
+                                    <Avatar.Fallback>
+                                        <Icon as={MdPerson} boxSize={isMini ? 4 : 6} />
+                                    </Avatar.Fallback>
                                 )}
-                            </HStack>
-                        ))}
+                            </Avatar.Root>
+                            
+                            {!isMini && (
+                                <Stack gap="0" align="flex-start">
+                                    <Text fontSize="xs">أهلا</Text>
+                                    <Text fontWeight="bold" fontSize="sm" color="gray.700" whiteSpace="nowrap">
+                                        {loading ? "..." : studentName}
+                                    </Text>
+                                </Stack>
+                            )}
+                        </HStack>
                     </Stack>
                 </Box>
 
@@ -178,4 +210,4 @@ function StudentSideBar() {
     )
 }
 
-export default StudentSideBar;
+export default StudentSideBar
