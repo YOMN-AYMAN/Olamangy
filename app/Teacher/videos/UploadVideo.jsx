@@ -107,7 +107,8 @@ export default function UploadVideo() {
 
     setLoading(true)
     try {
-      const lessonsRef = ref(rtdb, `teachers/${user.uid}/lessons/${formData.academicStage.slice(0, 3) + formData.academicYear + formData.semester}`)
+      const academicKey = formData.academicStage.slice(0, 3) + formData.academicYear + formData.semester
+      const lessonsRef = ref(rtdb, `teachers/${user.uid}/lessons/${academicKey}`)
       const newLessonRef = push(lessonsRef)
       const lessonId = newLessonRef.key
       const arrLessonsRef = ref(rtdb, `teachers/${user.uid}/arrLessons`)
@@ -120,15 +121,26 @@ export default function UploadVideo() {
         ...formData,
         createdAt: new Date().toISOString(),
         views: 0,
-        status: "active"
+        status: "active",
+        academicKey: academicKey, // Store key for easy lookup later
+        arr: [
+          {
+            type: "video",
+            title: formData.title,
+            description: formData.description,
+            videoUrl: formData.videoUrl || "",
+            createdAt: new Date().toISOString()
+          }
+        ]
       }
-      const obj = {[lessonId]: formData.academicStage.slice(0, 3) + formData.academicYear + formData.semester}
+
+      const obj = {[lessonId]: academicKey}
       await set(newLessonRef, lessonData)
       await update(arrLessonsRef, obj)
 
       toaster.create({
         title: "تم الحفظ",
-        description: "تم رفع الدرس بنجاح، جاري التحويل...",
+        description: "تم إنشاء الدرس بنجاح، جاري التحويل لإكمال البيانات...",
         type: "success",
       })
 

@@ -61,7 +61,7 @@ export async function getAllVideos() {
  * await deleteVideo("abc-guid-123");
  */
 export async function deleteVideo(videoId) {
-  const res = await fetch(`${BASE_URL}/video/${videoId}`, { method: "DELETE" });
+  const res = await fetch(`${BASE_URL}/video/${videoId}`, {method: "DELETE"});
   if (!res.ok) throw new Error((await res.json()).error || "فشل حذف الفيديو");
   return res.json();
 }
@@ -92,6 +92,7 @@ export function uploadVideo(uploadURL, file, onProgress) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
+    // تحديث الـ progress
     if (onProgress) {
       xhr.upload.addEventListener("progress", (e) => {
         if (e.lengthComputable) {
@@ -100,15 +101,115 @@ export function uploadVideo(uploadURL, file, onProgress) {
       });
     }
 
+    // لما ينجح الرفع
     xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) resolve();
-      else reject(new Error(`فشل الرفع: ${xhr.status}`));
+      if (xhr.status >= 200 && xhr.status < 300) {
+        console.log("Bunny upload successful!");
+        resolve({
+          success: true,
+          publicUrl: uploadURL,
+          status: xhr.status,
+        });
+      } else {
+        reject(new Error(`فشل الرفع: ${xhr.status} ${xhr.statusText}`));
+      }
     };
 
+    // لو حصل خطأ في الشبكة
     xhr.onerror = () => reject(new Error("خطأ في الشبكة أثناء الرفع"));
 
+    // فتح الاتصال
     xhr.open("PUT", uploadURL);
-    xhr.setRequestHeader("Content-Type", file.type || "video/mp4");
+
+    // مهم جداً: AccessKey زي ما في الدالة التانية
+    xhr.setRequestHeader(
+      "AccessKey",
+      process.env.NEXT_PUBLIC_BUNNY_STREAM_KEY
+    );
+
+    // نوع الملف
+    xhr.setRequestHeader(
+      "Content-Type",
+      file.type || "application/octet-stream"
+    );
+
+    // ارسال الملف
     xhr.send(file);
   });
-} 
+}
+const uploadToBunny = async (fileObject) => {
+  try {
+    console.log("Starting Bunny upload for:", fileObject.name);
+
+    // Step 1: Get upload URL from backend
+    const response = await fetch(`https://bunny-beryl.vercel.app/api/bunny/link/${fileObject.name}`);
+    if (!response.ok) {
+      throw new Error("Failed to get Bunny upload URL");
+    }
+    const data = await response.json();
+    const {uploadURL, videoGuid, videoId} = data;
+
+    console.log("Got Bunny upload info:", data);
+
+    // Update status
+    updateFileProgress(fileObject.id, 0, "uploading");
+
+    // Step 2: Upload file using PUT
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = Math.round((event.loaded * 100) / event.total);
+          updateFileProgress(
+            fileObject.id,
+            progress,
+            "uploading"
+          );
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          console.log("Bunny upload successful!");
+          updateFileProgress(
+            fileObject.id,
+            100,
+            "completed",
+            videoGuid
+          );
+          resolve({
+            success: true,
+            publicUrl: videoGuid,
+            key: videoId,
+            service: 'bunny'
+          });
+        } else {
+          reject(new Error(`Bunny upload failed: ${xhr.status} ${xhr.statusText}`));
+        }
+      };
+
+      xhr.onerror = () => {
+        reject(new Error("Bunny upload network error"));
+      };
+
+      xhr.open("PUT", uploadURL);
+      // 👈 هنا بالظبط
+      xhr.setRequestHeader(
+        "AccessKey",
+        process.env.NEXT_PUBLIC_BUNNY_STREAM_KEY
+      );
+      xhr.setRequestHeader(
+        "Content-Type",
+        "application/octet-stream"
+      );
+      // The upload URL provided by the backend is used directly.
+      xhr.send(fileObject.file);
+    });
+
+  } catch (error) {
+    console.error("Bunny upload error:", error);
+    updateFileProgress(fileObject.id, 0, "error", null, error.message);
+    throw error;
+  }
+};

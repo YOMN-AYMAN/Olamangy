@@ -51,8 +51,9 @@ export default function LessonDetailsPage() {
   const [limit, setLimit] = useState(1);
   const [loading, setLoading] = useState(true);
   const [parts, setParts] = useState(1);
+  const [currentPart, setCurrentPart] = useState(null);
   const [activeSection, setActiveSection] = useState(["video"]);
-
+  const [path, setPath] = useState("")
   useEffect(() => {
     const fetchLesson = async () => {
       if (!id) return;
@@ -60,6 +61,7 @@ export default function LessonDetailsPage() {
         const lessonRef = ref(rtdb, `teachers/${teacherProfile?.id}/arrLessons/${id}`);
         const data = await get(lessonRef);
         if (data.exists()) {
+          setPath(data.val())
           onValue(ref(rtdb, `teachers/${teacherProfile?.id}/lessons/${data.val()}`), (snapshot) => {
             if (snapshot.exists()) {
               const categoryLessons = snapshot.val();
@@ -77,8 +79,15 @@ export default function LessonDetailsPage() {
   }, [id, teacherProfile]);
 
   useEffect(() => {
-    setLimit(lesson?.limit || 1);
+    setLimit(lesson?.pages.length - 1)
   }, [lesson]);
+  ////////////////////////
+  useEffect(() => {
+    if (parts && lesson?.pages) {
+      setCurrentPart(lesson?.pages[parts])
+      setActiveSection([lesson?.pages[parts]?.type])
+    }
+  }, [parts, lesson]);
 
   if (loading) {
     return (
@@ -173,16 +182,32 @@ export default function LessonDetailsPage() {
                 <AccordionItemTrigger px={6} py={4} _hover={{bg: "whiteAlpha.100"}}>
                   <HStack width="100%" justify="space-between">
                     <HStack>
-                      <Icon as={MdExpandMore} boxSize={5} color="fg.subtle" />
+                      <Icon as={MdExpandMore} boxSize={5} color={activeSection == "video" ? "fg.pink" : "fg.subtle"} />
                     </HStack>
                     <HStack gap={3}>
-                      <Text fontWeight="bold">فيديو</Text>
-                      <Icon as={MdVideoLibrary} boxSize={5} color="fg.muted" />
+                      <Text fontWeight="bold" color={activeSection == "video" ? "fg.pink" : "fg.subtle"} >فيديو {lesson?.arr?.[parts - 1]?.type === "video" && "(مطبق)"}</Text>
+                      <Icon as={MdVideoLibrary} boxSize={5} color={activeSection == "video" ? "fg.pink" : "fg.subtle"} />
                     </HStack>
                   </HStack>
                 </AccordionItemTrigger>
                 <AccordionItemContent px={6} pb={6}>
-              <VideoCompent/>
+                  <VStack align="stretch" gap={4}>
+                    {lesson?.arr?.[parts - 1]?.type === "video" && (
+                      <Box p={4} bg="bg.muted" borderRadius="lg">
+                        <Text fontWeight="bold">{lesson.arr[parts - 1].title}</Text>
+                        <Text fontSize="sm">{lesson.arr[parts - 1].description}</Text>
+                        <Text fontSize="xs" color="blue.500" mt={2}>ID: {lesson.arr[parts - 1].videoUrl}</Text>
+                      </Box>
+                    )}
+                    <Separator />
+                    <VideoCompent
+                      lesson={lesson}
+                      path={path}
+                      currentPart={currentPart}
+                      teacherId={teacherProfile?.id}
+                      partIndex={parts}
+                    />
+                  </VStack>
                 </AccordionItemContent>
               </AccordionItem>
             </Box>
@@ -193,18 +218,24 @@ export default function LessonDetailsPage() {
                 <AccordionItemTrigger px={6} py={4} _hover={{bg: "whiteAlpha.100"}}>
                   <HStack width="100%" justify="space-between">
                     <HStack>
-                      <Icon as={MdExpandMore} boxSize={5} color="fg.subtle" />
+                      <Icon as={MdExpandMore} boxSize={5}  color={activeSection == "file" ? "fg.pink" : "fg.subtle"} />
                     </HStack>
                     <HStack gap={3}>
-                      <Text fontWeight="bold">ملف</Text>
-                      <Icon as={MdInsertDriveFile} boxSize={5} color="fg.muted" />
+                      <Text fontWeight="bold"  color={activeSection == "file" ? "fg.pink" : "fg.subtle"}>ملف {lesson?.arr?.[parts - 1]?.type === "file" && "(مطبق)"}</Text>
+                      <Icon as={MdInsertDriveFile} boxSize={5} color={activeSection == "file" ? "fg.pink" : "fg.subtle"} />
                     </HStack>
                   </HStack>
                 </AccordionItemTrigger>
                 <AccordionItemContent px={6} pb={6}>
-                  <Center py={10} color="fg.subtle">
-                    <Text>لا توجد ملفات مرفقة حالياً</Text>
-                  </Center>
+                  {lesson?.arr?.[parts - 1]?.type === "file" ? (
+                    <Box p={4} bg="bg.muted" borderRadius="lg">
+                      <Text fontWeight="bold">ملف مرفق: {lesson.arr[parts - 1].title}</Text>
+                    </Box>
+                  ) : (
+                    <Center py={10} color="fg.subtle">
+                      <Text>لا توجد ملفات مرفقة حالياً لهذا الجزء</Text>
+                    </Center>
+                  )}
                 </AccordionItemContent>
               </AccordionItem>
             </Box>
@@ -215,18 +246,24 @@ export default function LessonDetailsPage() {
                 <AccordionItemTrigger px={6} py={4} _hover={{bg: "whiteAlpha.100"}}>
                   <HStack width="100%" justify="space-between">
                     <HStack>
-                      <Icon as={MdExpandMore} boxSize={5} color="fg.subtle" />
+                      <Icon as={MdExpandMore} boxSize={5} color={activeSection == "exam" ? "fg.pink" : "fg.subtle"} />
                     </HStack>
                     <HStack gap={3}>
-                      <Text fontWeight="bold">امتحان</Text>
-                      <Icon as={MdQuiz} boxSize={5} color="fg.muted" />
+                      <Text fontWeight="bold" color={activeSection == "exam" ? "fg.pink" : "fg.subtle"}>امتحان {lesson?.arr?.[parts - 1]?.type === "quiz" && "(مطبق)"}</Text>
+                      <Icon as={MdQuiz} boxSize={5} color={activeSection == "exam" ? "fg.pink" : "fg.subtle"} />
                     </HStack>
                   </HStack>
                 </AccordionItemTrigger>
                 <AccordionItemContent px={6} pb={6}>
-                  <Center py={10} color="fg.subtle">
-                    <Text>لا يوجد امتحان لهذا الجزء</Text>
-                  </Center>
+                  {lesson?.arr?.[parts - 1]?.type === "quiz" ? (
+                    <Box p={4} bg="bg.muted" borderRadius="lg">
+                      <Text fontWeight="bold">امتحان مرفق</Text>
+                    </Box>
+                  ) : (
+                    <Center py={10} color="fg.subtle">
+                      <Text>لا يوجد امتحان لهذا الجزء</Text>
+                    </Center>
+                  )}
                 </AccordionItemContent>
               </AccordionItem>
             </Box>

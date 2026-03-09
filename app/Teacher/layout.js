@@ -11,7 +11,7 @@ export default function TeacherLayout({children}) {
 
       </Box>
       <Box width={"100%"} overflow="hidden" display={"flex"} flexDirection={"column"}>
-        <Box mr={-5}>
+        <Box  mr={-5}>
           <Navbar />
         </Box>
         <Box
