@@ -3,6 +3,8 @@ import {rtdb} from "@/auth/firebase";
 import {CustomSelect} from "@/components/ui/Customselect";
 import {uploadFileToB2} from "@/components/ui/UploadImg";
 import {useAuth} from "@/providers/AuthContext";
+import {useTeacher} from "@/providers/teacherProvider";
+import {toaster, Toaster} from "@/components/ui/toaster";
 import {
   Box, Input, VStack, SimpleGrid, Text, Button,
   Avatar, Flex, Icon, HStack, Textarea,
@@ -171,13 +173,54 @@ const countryCodes = [
   {code: "+249", country: "السودان", flag: "🇸🇩"},
 ]
 
+// Teacher subjects
+const teacherSubjects = [
+  {value: "arabic", label: "اللغة العربية", stage: ["primary", "preparatory", "secondary"]},
+  {value: "english", label: "اللغة الإنجليزية", stage: ["primary", "preparatory", "secondary"]},
+  {value: "math", label: "الرياضيات", stage: ["primary", "preparatory", "secondary"]},
+
+  {value: "science", label: "العلوم", stage: ["primary", "preparatory"]},
+  {value: "integrated_science", label: "العلوم المتكاملة", stage: ["secondary"]},
+
+  {value: "social", label: "الدراسات الاجتماعية", stage: ["primary", "preparatory"]},
+
+  {value: "physics", label: "الفيزياء", stage: ["secondary"]},
+  {value: "chemistry", label: "الكيمياء", stage: ["secondary"]},
+  {value: "biology", label: "الأحياء", stage: ["secondary"]},
+
+  {value: "history", label: "التاريخ", stage: ["secondary"]},
+  {value: "geography", label: "الجغرافيا", stage: ["secondary"]},
+
+  {value: "psychology_sociology", label: "علم النفس والاجتماع", stage: ["secondary"]},
+
+  {value: "philosophy_logic", label: "الفلسفة والمنطق", stage: ["secondary"]},
+
+  {value: "economics_statistics", label: "الاقتصاد والإحصاء", stage: ["secondary"]},
+
+  {value: "religion", label: "التربية الدينية", stage: ["primary", "preparatory", "secondary"]},
+  {value: "sports", label: "التربية الرياضية", stage: ["primary", "preparatory", "secondary"]},
+
+  {value: "computers", label: "الحاسب الآلي وعلوم الحاسب", stage: ["primary", "preparatory", "secondary"]},
+
+  {value: "technology", label: "التكنولوجيا", stage: ["preparatory"]},
+
+  {value: "art", label: "التربية الفنية", stage: ["primary", "preparatory"]},
+  {value: "music", label: "التربية الموسيقية", stage: ["primary", "preparatory"]},
+]
+
+const teachingStages = [
+  {value: "primary", label: "الابتدائي"},
+  {value: "preparatory", label: "الإعدادي"},
+  {value: "secondary", label: "الثانوي"},
+]
+
 
 export default function SettingsPage() {
   const [isEditing, setIsEditing] = useState(false);
   const {user} = useAuth()
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
-
+  const {teacherProfile} = useTeacher()
   const [userData, setUserData] = useState({
     fullName: "",
     phone: "",
@@ -190,12 +233,31 @@ export default function SettingsPage() {
     jobTitle: "",
     bio: ""
   });
+  const [localTeacherData, setLocalTeacherData] = useState({
+    stages: [],
+    subjectId: ""
+  });
   ////////////////////////////////
 
   useEffect(() => {
-    setUserData(user)
-  }, [user])
+    if (user) setUserData(user);
+  }, [user]);
 
+  useEffect(() => {
+    if (teacherProfile) {
+      setLocalTeacherData({
+        stages: teacherProfile.stages || [],
+        subjectId: teacherProfile.subjectId || ""
+      });
+    }
+  }, [teacherProfile]);
+
+  const filteredSubjects = (userStages) => {
+    if (!userStages || !Array.isArray(userStages) || userStages.length === 0) return [];
+    return teacherSubjects.filter(subject =>
+      userStages.every(stage => subject.stage.includes(stage))
+    );
+  };
   /////////////////////////////
 
   const compressImage = (file, maxWidth = 512, quality = 0.8) => {
@@ -243,12 +305,20 @@ export default function SettingsPage() {
     const maxSize = 5 * 1024 * 1024;
 
     if (!allowedTypes.includes(file.type)) {
-      alert("فقط صور JPG, PNG, WEBP مسموحة");
+      toaster.create({
+        title: "خطأ",
+        description: "فقط صور JPG, PNG, WEBP مسموحة",
+        type: "error",
+      });
       return;
     }
 
     if (file.size > maxSize) {
-      alert("حجم الصورة يجب أن يكون أقل من 5MB");
+      toaster.create({
+        title: "خطأ",
+        description: "حجم الصورة يجب أن يكون أقل من 5MB",
+        type: "error",
+      });
       return;
     }
 
@@ -269,9 +339,19 @@ export default function SettingsPage() {
 
       setUserData(prev => ({...prev, avatar: url}));
 
+      toaster.create({
+        title: "تم",
+        description: "تم تحديث الصورة الشخصية",
+        type: "success",
+      });
+
     } catch (err) {
       console.error(err);
-      alert("فشل رفع الملف: " + err.message);
+      toaster.create({
+        title: "فشل الرفع",
+        description: err.message,
+        type: "error",
+      });
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -286,7 +366,32 @@ export default function SettingsPage() {
   };
   const handleSave = async () => {
     setIsEditing(false);
-    await set(ref(rtdb, `users/${user?.uid}`), userData);
+    try {
+      // Update basic user info
+      await set(ref(rtdb, `users/${user?.uid}`), userData);
+
+      // Update teacher-specific info (stages and subjectId)
+      // We use update to preserve other fields like status, createdAt, etc.
+      const teacherUpdates = {
+        stages: localTeacherData.stages,
+        subjectId: localTeacherData.subjectId
+      };
+      const {update} = await import("firebase/database");
+      await update(ref(rtdb, `teachers/${user?.uid}`), teacherUpdates);
+
+      toaster.create({
+        title: "تم الحفظ",
+        description: "تم تحديث بياناتك بنجاح",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Save error:", error);
+      toaster.create({
+        title: "خطأ",
+        description: "فشل في حفظ البيانات، يرجى المحاولة مرة أخرى",
+        type: "error",
+      });
+    }
   };
 
 
@@ -462,46 +567,58 @@ export default function SettingsPage() {
             </Text>
 
             <VStack align="flex-start" gap={1.5}>
-              <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>المادة الدراسية</Text>
-              <Input
-                {...inputStyle}
-                name="specialization"
-                value={userData?.specialization || ""}
-                disabled={!isEditing}
-                onChange={handleChange}
-              />
+              <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>المرحلة</Text>
+              <Flex gap={2} flexWrap="wrap">
+                {teachingStages.map((stage) => (
+                  <Button
+                    key={stage.value}
+                    size="xs"
+                    disabled={!isEditing}
+                    variant={localTeacherData?.stages?.includes(stage.value) ? "solid" : "outline"}
+                    colorScheme={localTeacherData?.stages?.includes(stage.value) ? "blue" : "gray"}
+                    onClick={() => {
+                      const currentStages = localTeacherData?.stages || [];
+                      let newStages;
+                      if (currentStages.includes(stage.value)) {
+                        newStages = currentStages.filter(s => s !== stage.value);
+                      } else {
+                        newStages = [...currentStages, stage.value];
+                      }
+                      setLocalTeacherData(prev => ({...prev, stages: newStages}));
+                    }}
+                  >
+                    {stage.label}
+                  </Button>
+                ))}
+              </Flex>
             </VStack>
 
             <VStack align="flex-start" gap={1.5}>
-              <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>اللقب المهني</Text>
+              <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>المادة الدراسية</Text>
+              <NativeSelect.Root h={"55px"} w="100%" disabled={!isEditing || !localTeacherData?.stages?.length}>
+                <NativeSelect.Field
+                  h={"55px"} px={3}
+                  value={localTeacherData?.subjectId || ""}
+                  onChange={(e) => setLocalTeacherData(prev => ({...prev, subjectId: e.target.value}))}
+                >
+                  <option value="">{localTeacherData?.stages?.length ? "اختر المادة" : "اختر المراحل أولاً"}</option>
+                  {filteredSubjects(localTeacherData?.stages).map((s) => (
+                    <option key={s.value} value={s.value}>{s.label}</option>
+                  ))}
+                </NativeSelect.Field>
+                <NativeSelect.Indicator />
+              </NativeSelect.Root>
+            </VStack>
+
+            <VStack align="flex-start" gap={1.5}>
+              <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>اللقب المهني (يظهر للطلاب)</Text>
               <Input
                 {...inputStyle}
                 name="jobTitle"
                 value={userData?.jobTitle || ""}
                 disabled={!isEditing}
                 onChange={handleChange}
-              />
-            </VStack>
-
-            <VStack align="flex-start" gap={1.5}>
-              <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>المرحلة</Text>
-              <Input
-                {...inputStyle}
-                name="city"
-                value={userData?.levels || ""}
-                disabled={!isEditing}
-                onChange={handleChange}
-              />
-            </VStack>
-
-            <VStack align="flex-start" gap={1.5}>
-              <Text fontSize="xs" fontWeight="bold" color="fg.muted" pr={2}>المستويات</Text>
-              <Input
-                {...inputStyle}
-                name="city"
-                value={userData?.grades || ""}
-                disabled={!isEditing}
-                onChange={handleChange}
+                placeholder="مثلاً: كبير معلمي الفيزياء"
               />
             </VStack>
 
@@ -521,6 +638,7 @@ export default function SettingsPage() {
           </SimpleGrid>
         </Box>
       </Box>
+      <Toaster />
     </>
   );
 }

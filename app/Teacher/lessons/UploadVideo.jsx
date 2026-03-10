@@ -85,7 +85,7 @@ export default function UploadVideo() {
     }
 
     const {title, academicStage, academicYear} = formData
-    if (!title || !academicStage || !academicYear ) {
+    if (!title || !academicStage || !academicYear) {
       const missing = []
       if (!title) missing.push("العنوان")
       if (!academicStage) missing.push("المرحلة")

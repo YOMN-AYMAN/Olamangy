@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { useRouter } from "next/navigation"
-import { rtdb } from "@/auth/firebase"
-import { ref, update } from "firebase/database"
+import {useState, useM, useEffect, useRef} from "react"
+import {useRouter} from "next/navigation"
+import {rtdb} from "@/auth/firebase"
+import {ref, update} from "firebase/database"
 import {
   Box,
   Button,
@@ -13,100 +13,108 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
-import { toaster, Toaster } from "@/components/ui/toaster"
-import { MdArrowBack, MdUpload, MdInfoOutline, MdCheckCircle, MdCancel } from "react-icons/md"
+import {toaster, Toaster} from "@/components/ui/toaster"
+import {MdArrowBack, MdUpload, MdInfoOutline, MdCheckCircle, MdCancel} from "react-icons/md"
 import Navbar from "@/components/ui/Navbar"
-import { CustomSelect } from "@/components/ui/Customselect"
-import { uploadFileToB2 } from "@/components/ui/UploadImg" // 👈 adjust path as needed
+import {CustomSelect} from "@/components/ui/Customselect"
+import {uploadFileToB2} from "@/components/ui/UploadImg" // 👈 adjust path as needed
 
 // Academic stages
 const academicStages = [
-  { value: "primary", label: "الابتدائية" },
-  { value: "preparatory", label: "الإعدادية" },
-  { value: "secondary", label: "الثانوية" },
+  {value: "primary", label: "الابتدائية"},
+  {value: "preparatory", label: "الإعدادية"},
+  {value: "secondary", label: "الثانوية"},
 ]
 
 // Academic years
 const academicYears = {
   primary: [
-    { value: "1", label: "الصف الأول الابتدائي" },
-    { value: "2", label: "الصف الثاني الابتدائي" },
-    { value: "3", label: "الصف الثالث الابتدائي" },
-    { value: "4", label: "الصف الرابع الابتدائي" },
-    { value: "5", label: "الصف الخامس الابتدائي" },
-    { value: "6", label: "الصف السادس الابتدائي" },
+    {value: "1", label: "الصف الأول الابتدائي"},
+    {value: "2", label: "الصف الثاني الابتدائي"},
+    {value: "3", label: "الصف الثالث الابتدائي"},
+    {value: "4", label: "الصف الرابع الابتدائي"},
+    {value: "5", label: "الصف الخامس الابتدائي"},
+    {value: "6", label: "الصف السادس الابتدائي"},
   ],
   preparatory: [
-    { value: "1", label: "الصف الأول الإعدادي" },
-    { value: "2", label: "الصف الثاني الإعدادي" },
-    { value: "3", label: "الصف الثالث الإعدادي" },
+    {value: "1", label: "الصف الأول الإعدادي"},
+    {value: "2", label: "الصف الثاني الإعدادي"},
+    {value: "3", label: "الصف الثالث الإعدادي"},
   ],
   secondary: [
-    { value: "1", label: "الصف الأول الثانوي" },
-    { value: "2", label: "الصف الثاني الثانوي" },
-    { value: "3", label: "الصف الثالث الثانوي" },
+    {value: "1", label: "الصف الأول الثانوي"},
+    {value: "2", label: "الصف الثاني الثانوي"},
+    {value: "3", label: "الصف الثالث الثانوي"},
   ]
 }
 
 // Departments - only for secondary
 const departments = [
-  { value: "science", label: "علمي علوم" },
-  { value: "mathematics", label: "علمي رياضة" },
-  { value: "literary", label: "أدبي" }
+  {value: "science", label: "علمي علوم"},
+  {value: "mathematics", label: "علمي رياضة"},
+  {value: "literary", label: "أدبي"}
 ]
 
 // Languages - only for secondary
 const languages = [
-  { value: "french", label: "الفرنسية" },
-  { value: "german", label: "الألمانية" },
-  { value: "italian", label: "الإيطالية" },
-  { value: "spanish", label: "الإسبانية" },
-  { value: "english", label: "الإنجليزية" },
+  {value: "french", label: "الفرنسية"},
+  {value: "german", label: "الألمانية"},
+  {value: "italian", label: "الإيطالية"},
+  {value: "spanish", label: "الإسبانية"},
+  {value: "english", label: "الإنجليزية"},
 ]
 
 // Education type options
 const educationTypes = [
-  { value: "public", label: "تعليم حكومي" },
-  { value: "private", label: "تعليم خاص" },
-  { value: "azhar", label: "الأزهر الشريف" },
-  { value: "institutes", label: "معاهد" },
+  {value: "public", label: "تعليم حكومي"},
+  {value: "private", label: "تعليم خاص"},
+  {value: "azhar", label: "الأزهر الشريف"},
+  {value: "institutes", label: "معاهد"},
 ]
 
 // Teacher subjects
 const teacherSubjects = [
-  { value: "arabic", label: "اللغة العربية" },
-  { value: "english", label: "اللغة الإنجليزية" },
-  { value: "math", label: "الرياضيات" },
-  { value: "physics", label: "الفيزياء" },
-  { value: "chemistry", label: "الكيمياء" },
-  { value: "biology", label: "الأحياء" },
-  { value: "geography", label: "الجغرافيا" },
-  { value: "history", label: "التاريخ" },
-  { value: "philosophy", label: "الفلسفة" },
-  { value: "psychology", label: "علم النفس" },
-  { value: "economics", label: "الاقتصاد" },
-  { value: "french", label: "اللغة الفرنسية" },
-  { value: "german", label: "اللغة الألمانية" },
-  { value: "italian", label: "اللغة الإيطالية" },
-  { value: "spanish", label: "اللغة الإسبانية" },
-  { value: "science", label: "العلوم" },
-  { value: "social", label: "الدراسات الاجتماعية" },
-  { value: "religion", label: "التربية الدينية" },
-  { value: "art", label: "التربية الفنية" },
-  { value: "music", label: "التربية الموسيقية" },
-  { value: "sports", label: "التربية البدنية" },
-  { value: "technology", label: "التكنولوجيا" },
-  { value: "computers", label: "الحاسب الآلي" },
+  { value: "arabic", label: "اللغة العربية", stage: ["primary", "preparatory", "secondary"] },
+  { value: "english", label: "اللغة الإنجليزية", stage: ["primary", "preparatory", "secondary"] },
+  { value: "math", label: "الرياضيات", stage: ["primary", "preparatory", "secondary"] },
+
+  { value: "science", label: "العلوم", stage: ["primary", "preparatory"] },
+  { value: "integrated_science", label: "العلوم المتكاملة", stage: ["secondary"] },
+
+  { value: "social", label: "الدراسات الاجتماعية", stage: ["primary", "preparatory"] },
+
+  { value: "physics", label: "الفيزياء", stage: ["secondary"] },
+  { value: "chemistry", label: "الكيمياء", stage: ["secondary"] },
+  { value: "biology", label: "الأحياء", stage: ["secondary"] },
+
+  { value: "history", label: "التاريخ", stage: ["secondary"] },
+  { value: "geography", label: "الجغرافيا", stage: ["secondary"] },
+
+  { value: "psychology_sociology", label: "علم النفس والاجتماع", stage: ["secondary"] },
+
+  { value: "philosophy_logic", label: "الفلسفة والمنطق", stage: ["secondary"] },
+
+  { value: "economics_statistics", label: "الاقتصاد والإحصاء", stage: ["secondary"] },
+
+  { value: "religion", label: "التربية الدينية", stage: ["primary", "preparatory", "secondary"] },
+  { value: "sports", label: "التربية الرياضية", stage: ["primary", "preparatory", "secondary"] },
+
+  { value: "computers", label: "الحاسب الآلي وعلوم الحاسب", stage: ["primary", "preparatory", "secondary"] },
+
+  { value: "technology", label: "التكنولوجيا", stage: ["preparatory"] },
+
+  { value: "art", label: "التربية الفنية", stage: ["primary", "preparatory"] },
+  { value: "music", label: "التربية الموسيقية", stage: ["primary", "preparatory"] },
 ]
 
 const teachingStages = [
-  { value: "primary", label: "الابتدائي" },
-  { value: "preparatory", label: "الإعدادي" },
-  { value: "secondary", label: "الثانوي" },
+  {value: "primary", label: "الابتدائي"},
+  {value: "preparatory", label: "الإعدادي"},
+  {value: "secondary", label: "الثانوي"},
 ]
 
 
-function ImageGuideModal({ onClose }) {
+function ImageGuideModal({onClose}) {
   return (
     <>
       {/* Modal */}
@@ -127,7 +135,7 @@ function ImageGuideModal({ onClose }) {
         display="flex"
         flexDirection="column"
         overflow="hidden"
-        _dark={{ bg: "gray.900", borderColor: "gray.700" }}
+        _dark={{bg: "gray.900", borderColor: "gray.700"}}
       >
         {/* Header */}
         <Flex
@@ -138,9 +146,9 @@ function ImageGuideModal({ onClose }) {
           borderBottom="1px solid"
           borderColor="gray.100"
           flexShrink={0}
-          _dark={{ borderColor: "gray.700" }}
+          _dark={{borderColor: "gray.700"}}
         >
-          <Text fontWeight="bold" fontSize="md" color="#000" _dark={{ color: "white" }}>
+          <Text fontWeight="bold" fontSize="md" color="#000" _dark={{color: "white"}}>
             إرشادات صورة الملف الشخصي
           </Text>
           <Box
@@ -156,12 +164,12 @@ function ImageGuideModal({ onClose }) {
             fontSize="lg"
             fontWeight="bold"
             cursor="pointer"
-            _hover={{ bg: "gray.200", color: "gray.700" }}
+            _hover={{bg: "gray.200", color: "gray.700"}}
             onClick={onClose}
             _dark={{
               bg: "gray.700",
               color: "gray.300",
-              _hover: { bg: "gray.600", color: "white" },
+              _hover: {bg: "gray.600", color: "white"},
             }}
           >
             ×
@@ -172,12 +180,12 @@ function ImageGuideModal({ onClose }) {
         <Box px={6} py={5} overflowY="auto" flex="1" dir="rtl">
 
           {/* Intro text */}
-          <Text fontSize="sm" color="gray.600" mb={5} lineHeight="1.8" _dark={{ color: "gray.400" }}>
+          <Text fontSize="sm" color="gray.600" mb={5} lineHeight="1.8" _dark={{color: "gray.400"}}>
             يجب أن تكون صورتك الشخصية صورة رسمية واضحة تعكس هويتك المهنية كمدرس. اطّلع على الأمثلة أدناه لمعرفة الفرق بين الصورة المقبولة وغير المقبولة.
           </Text>
 
           {/* Examples side by side */}
-          <Flex gap={4} mb={5} direction={{ base: "column", sm: "row" }}>
+          <Flex gap={4} mb={5} direction={{base: "column", sm: "row"}}>
 
             {/* CORRECT - Formal */}
             <Box flex={1}>
@@ -221,10 +229,10 @@ function ImageGuideModal({ onClose }) {
                 py={2}
                 border="1px solid"
                 borderColor="green.200"
-                _dark={{ bg: "green.900", borderColor: "green.700" }}
+                _dark={{bg: "green.900", borderColor: "green.700"}}
               >
                 <MdCheckCircle color="#38A169" size={16} />
-                <Text fontSize="sm" fontWeight="bold" color="green.600" _dark={{ color: "green.300" }}>
+                <Text fontSize="sm" fontWeight="bold" color="green.600" _dark={{color: "green.300"}}>
                   صورة مقبولة
                 </Text>
               </Flex>
@@ -239,7 +247,7 @@ function ImageGuideModal({ onClose }) {
                     <Box color="green.500" flexShrink={0}>
                       <MdCheckCircle size={13} />
                     </Box>
-                    <Text fontSize="xs" color="gray.600" _dark={{ color: "gray.400" }}>
+                    <Text fontSize="xs" color="gray.600" _dark={{color: "gray.400"}}>
                       {tip}
                     </Text>
                   </Flex>
@@ -289,10 +297,10 @@ function ImageGuideModal({ onClose }) {
                 py={2}
                 border="1px solid"
                 borderColor="red.200"
-                _dark={{ bg: "red.900", borderColor: "red.700" }}
+                _dark={{bg: "red.900", borderColor: "red.700"}}
               >
                 <MdCancel color="#E53E3E" size={16} />
-                <Text fontSize="sm" fontWeight="bold" color="red.600" _dark={{ color: "red.300" }}>
+                <Text fontSize="sm" fontWeight="bold" color="red.600" _dark={{color: "red.300"}}>
                   صورة مرفوضة
                 </Text>
               </Flex>
@@ -307,7 +315,7 @@ function ImageGuideModal({ onClose }) {
                     <Box color="red.500" flexShrink={0}>
                       <MdCancel size={13} />
                     </Box>
-                    <Text fontSize="xs" color="gray.600" _dark={{ color: "gray.400" }}>
+                    <Text fontSize="xs" color="gray.600" _dark={{color: "gray.400"}}>
                       {tip}
                     </Text>
                   </Flex>
@@ -325,9 +333,9 @@ function ImageGuideModal({ onClose }) {
             rounded="lg"
             px={4}
             py={3}
-            _dark={{ bg: "blue.900", borderColor: "blue.700" }}
+            _dark={{bg: "blue.900", borderColor: "blue.700"}}
           >
-            <Text fontSize="xs" color="blue.700" lineHeight="1.8" _dark={{ color: "blue.300" }}>
+            <Text fontSize="xs" color="blue.700" lineHeight="1.8" _dark={{color: "blue.300"}}>
               💡 ملاحظة: سيتم مراجعة صورتك من قِبل فريق Dolphin Models. الصور غير الرسمية أو غير اللائقة ستؤدي إلى رفض طلب التسجيل أو طلب استبدال الصورة.
             </Text>
           </Box>
@@ -341,7 +349,7 @@ function ImageGuideModal({ onClose }) {
           borderTop="1px solid"
           borderColor="gray.100"
           flexShrink={0}
-          _dark={{ borderColor: "gray.700" }}
+          _dark={{borderColor: "gray.700"}}
         >
           <Button
             w="100%"
@@ -349,7 +357,7 @@ function ImageGuideModal({ onClose }) {
             color="white"
             rounded="xl"
             fontWeight="bold"
-            _hover={{ bg: "#0085bb" }}
+            _hover={{bg: "#0085bb"}}
             onClick={onClose}
           >
             فهمت
@@ -544,7 +552,7 @@ export default function Signup2() {
           subjectId: explanationSubject,
           stages: teacherStages,
           language: teacherLanguage,
-          profileImage: profileImageUrl, // 👈 B2 URL instead of base64
+          profileImage: profileImageUrl,
           status: "pending",
           createdAt: new Date().toISOString(),
           totalStudents: 0,
@@ -570,7 +578,7 @@ export default function Signup2() {
           academicStage,
           academicYear,
           educationType,
-          ...(isSecondary && { department, secondLanguage })
+          ...(isSecondary && {department, secondLanguage})
         }
         await update(ref(rtdb, 'users/' + signupData.uid), userData)
 
@@ -604,17 +612,17 @@ export default function Signup2() {
 
   if (!signupData) {
     return (
-      <Flex direction="column" minH="100vh" bg="#f7f9fc" _dark={{ bg: "gray.950" }}>
+      <Flex direction="column" minH="100vh" bg="#f7f9fc" _dark={{bg: "gray.950"}}>
         <Navbar />
         <Flex flex={1} align="center" justify="center">
-          <Text _dark={{ color: "white" }}>جاري التحميل...</Text>
+          <Text _dark={{color: "white"}}>جاري التحميل...</Text>
         </Flex>
       </Flex>
     )
   }
 
   return (
-    <Flex direction="column" minH="100vh" bg="#f7f9fc" _dark={{ bg: "gray.950" }}>
+    <Flex direction="column" minH="100vh" bg="#f7f9fc" _dark={{bg: "gray.950"}}>
 
       <Flex direction="column" align="center" mt={6} px={4} pb={10}>
 
@@ -636,7 +644,7 @@ export default function Signup2() {
               bg: "#333",
               boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
             }}
-            _active={{ transform: "translateX(-2px) scale(0.95)" }}
+            _active={{transform: "translateX(-2px) scale(0.95)"}}
           >
             <MdArrowBack size={20} />
           </Box>
@@ -648,7 +656,7 @@ export default function Signup2() {
               bg={userType === "student" ? "#e2e8f0" : "#ff3b5c"}
               transition="all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
               w={userType === "student" ? 2 : 8}
-              _dark={{ bg: userType === "student" ? "gray.700" : "#ff3b5c" }}
+              _dark={{bg: userType === "student" ? "gray.700" : "#ff3b5c"}}
             />
             <Box
               h={2}
@@ -656,7 +664,7 @@ export default function Signup2() {
               bg={userType === "student" ? "#ff3b5c" : "#e2e8f0"}
               transition="all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
               w={userType === "student" ? 8 : 2}
-              _dark={{ bg: userType === "student" ? "#ff3b5c" : "gray.700" }}
+              _dark={{bg: userType === "student" ? "#ff3b5c" : "gray.700"}}
             />
           </Flex>
         </Flex>
@@ -669,7 +677,7 @@ export default function Signup2() {
           </Text>
         </Box>
 
-        <Box bg="white" p={8} rounded="2xl" shadow="lg" w="100%" maxW="600px" overflow="hidden" _dark={{ bg: "gray.900" }}>
+        <Box bg="white" p={8} rounded="2xl" shadow="lg" w="100%" maxW="600px" overflow="hidden" _dark={{bg: "gray.900"}}>
 
           <Box
             position="relative"
@@ -683,7 +691,7 @@ export default function Signup2() {
                 /* STUDENT FORM */
                 <>
                   <Box>
-                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{ color: "white" }}>
+                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{color: "white"}}>
                       المرحلة الدراسية *
                     </Text>
                     <CustomSelect
@@ -695,7 +703,7 @@ export default function Signup2() {
                   </Box>
 
                   <Box>
-                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{ color: "white" }}>
+                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{color: "white"}}>
                       السنة الدراسية *
                     </Text>
                     <CustomSelect
@@ -708,7 +716,7 @@ export default function Signup2() {
                   </Box>
 
                   <Box>
-                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{ color: "white" }}>
+                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{color: "white"}}>
                       نوع التعليم *
                     </Text>
                     <CustomSelect
@@ -722,7 +730,7 @@ export default function Signup2() {
                   {isSecondary && (
                     <>
                       <Box>
-                        <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{ color: "white" }}>
+                        <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{color: "white"}}>
                           القسم الدراسي *
                         </Text>
                         <CustomSelect
@@ -734,7 +742,7 @@ export default function Signup2() {
                       </Box>
 
                       <Box>
-                        <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{ color: "white" }}>
+                        <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{color: "white"}}>
                           اللغة الثانية *
                         </Text>
                         <CustomSelect
@@ -751,19 +759,23 @@ export default function Signup2() {
                 /* TEACHER FORM */
                 <>
                   <Box>
-                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{ color: "white" }}>
+                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{color: "white"}}>
                       المادة المراد شرحها *
                     </Text>
                     <CustomSelect
                       value={explanationSubject}
                       onChange={setExplanationSubject}
-                      options={teacherSubjects}
-                      placeholder="اختر المادة"
+                      options={teacherStages.length > 0
+                        ? teacherSubjects.filter(s => teacherStages.every(st => s.stage.includes(st)))
+                        : []
+                      }
+                      placeholder={teacherStages.length > 0 ? "اختر المادة" : "اختر المراحل أولاً"}
+                      disabled={teacherStages.length === 0}
                     />
                   </Box>
 
                   <Box>
-                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{ color: "white" }}>
+                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{color: "white"}}>
                       المراحل الدراسية التي تدرسها *
                     </Text>
                     <Flex gap={2} flexWrap="wrap">
@@ -786,14 +798,14 @@ export default function Signup2() {
                       ))}
                     </Flex>
                     {teacherStages.length === 0 && (
-                      <Text fontSize="xs" color="gray.500" mt={1} _dark={{ color: "gray.400" }}>
+                      <Text fontSize="xs" color="gray.500" mt={1} _dark={{color: "gray.400"}}>
                         اختر مرحلة واحدة على الأقل
                       </Text>
                     )}
                   </Box>
 
                   <Box>
-                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{ color: "white" }}>
+                    <Text fontWeight="medium" color="#000" fontSize="sm" mb={2} textAlign="right" _dark={{color: "white"}}>
                       لغة الشرح *
                     </Text>
                     <Flex gap={3}>
@@ -821,7 +833,7 @@ export default function Signup2() {
                   {/* Profile Image Upload */}
                   <Box>
                     <Flex align="center" justify="space-between" mb={2}>
-                      <Text fontWeight="medium" color="#000" fontSize="sm" textAlign="right" _dark={{ color: "white" }}>
+                      <Text fontWeight="medium" color="#000" fontSize="sm" textAlign="right" _dark={{color: "white"}}>
                         * صورة الملف الشخصي
                       </Text>
                       <Box
@@ -839,15 +851,15 @@ export default function Signup2() {
                         border="1px solid"
                         borderColor="blue.200"
                         transition="all 0.2s"
-                        _hover={{ bg: "blue.100", borderColor: "blue.300" }}
+                        _hover={{bg: "blue.100", borderColor: "blue.300"}}
                         _dark={{
                           bg: "blue.900",
                           borderColor: "blue.700",
-                          _hover: { bg: "blue.800" }
+                          _hover: {bg: "blue.800"}
                         }}
                       >
                         <MdInfoOutline size={16} />
-                        <Text fontSize="xs" fontWeight="medium" color="#009EDB" _dark={{ color: "blue.300" }}>
+                        <Text fontSize="xs" fontWeight="medium" color="#009EDB" _dark={{color: "blue.300"}}>
                           إرشادات الصورة
                         </Text>
                       </Box>
@@ -860,7 +872,7 @@ export default function Signup2() {
                       accept="image/jpeg,image/png,image/webp"
                       onChange={handleImageUpload}
                       disabled={uploading}
-                      style={{ display: "none" }}
+                      style={{display: "none"}}
                     />
 
                     {/* Upload Box */}
@@ -877,19 +889,19 @@ export default function Signup2() {
                       cursor={uploading ? "not-allowed" : "pointer"}
                       transition="all 0.2s"
                       onClick={uploading ? undefined : handleImageClick}
-                      _hover={uploading ? {} : { borderColor: "#009EDB", bg: "#f0f9ff" }}
+                      _hover={uploading ? {} : {borderColor: "#009EDB", bg: "#f0f9ff"}}
                       opacity={uploading ? 0.7 : 1}
                       _dark={{
                         bg: "gray.800",
                         borderColor: profileImageUrl ? "#009EDB" : "gray.700",
-                        _hover: uploading ? {} : { borderColor: "#009EDB", bg: "gray.700" }
+                        _hover: uploading ? {} : {borderColor: "#009EDB", bg: "gray.700"}
                       }}
                     >
                       <Text
                         color={profileImageUrl ? "#009EDB" : uploading ? "gray.400" : "#a0aec0"}
                         fontSize="sm"
                         fontWeight={profileImageUrl ? "medium" : "normal"}
-                        _dark={{ color: profileImageUrl ? "#009EDB" : "gray.400" }}
+                        _dark={{color: profileImageUrl ? "#009EDB" : "gray.400"}}
                       >
                         {uploading
                           ? `جاري الرفع... ${uploadProgress}%`
@@ -903,7 +915,7 @@ export default function Signup2() {
 
                     {/* Progress Bar */}
                     {uploading && (
-                      <Box mt={2} h="4px" bg="gray.200" rounded="full" overflow="hidden" _dark={{ bg: "gray.700" }}>
+                      <Box mt={2} h="4px" bg="gray.200" rounded="full" overflow="hidden" _dark={{bg: "gray.700"}}>
                         <Box
                           h="100%"
                           bg="#009EDB"
@@ -924,14 +936,14 @@ export default function Signup2() {
                           rounded="md"
                           border="2px solid"
                           borderColor={profileImageUrl ? "green.300" : "yellow.300"}
-                          _dark={{ borderColor: profileImageUrl ? "green.600" : "yellow.600" }}
+                          _dark={{borderColor: profileImageUrl ? "green.600" : "yellow.600"}}
                         />
                       </Box>
                     )}
                   </Box>
 
-                  <Box bg="yellow.50" p={3} rounded="md" border="1px solid" borderColor="yellow.200" _dark={{ bg: "yellow.900", borderColor: "yellow.700" }}>
-                    <Text fontSize="sm" color="yellow.800" textAlign="right" _dark={{ color: "yellow.200" }}>
+                  <Box bg="yellow.50" p={3} rounded="md" border="1px solid" borderColor="yellow.200" _dark={{bg: "yellow.900", borderColor: "yellow.700"}}>
+                    <Text fontSize="sm" color="yellow.800" textAlign="right" _dark={{color: "yellow.200"}}>
                       ⚠️ ملاحظة: بعد إتمام التسجيل، سيقوم فريق Dolphin Models بمراجعة بياناتك والتواصل معك خلال 24 ساعة لتفعيل حسابك
                     </Text>
                   </Box>
@@ -972,7 +984,7 @@ export default function Signup2() {
               bg: "#0085bb",
               transform: "translateY(-2px)",
               boxShadow: "0 8px 25px rgba(0, 158, 219, 0.4)",
-              _before: { left: "100%" }
+              _before: {left: "100%"}
             }}
             _active={{
               transform: "translateY(0)",
@@ -990,7 +1002,7 @@ export default function Signup2() {
             cursor="pointer"
             textDecoration="underline"
             onClick={handleSwitchUserType}
-            _hover={{ color: "#0085bb" }}
+            _hover={{color: "#0085bb"}}
           >
             {userType === "student"
               ? "التسجيل كمعلم؟ اضغط هنا"
