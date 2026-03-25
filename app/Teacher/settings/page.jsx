@@ -10,209 +10,17 @@ import {
   Avatar, Flex, Icon, HStack, Textarea,
   NativeSelect
 } from "@chakra-ui/react";
-import {ref, set} from "firebase/database";
+import {ref, set, update} from "firebase/database";
 import {useEffect, useRef, useState} from "react";
 import {MdEdit, MdCheckCircle} from "react-icons/md";
+import {teacherSubjects, teachingStages, egyptData, countryCodes} from "@/components/Arr"
 
 
-const egyptData = {
-  "القاهرة": [
-    "القاهرة", "مدينة نصر", "مصر الجديدة", "الزمالك", "المعادي", "حلوان",
-    "مدينة الشروق", "المرج", "عين شمس", "النزهة", "المطرية", "شبرا",
-    "روض الفرج", "الأميرية", "السلام", "النزهة", "الوايلي", "الخليفة",
-    "مصر القديمة", "طره", "المعصرة", "15 مايو", "القطامية", "التجمع الخامس",
-    "الرحاب", "مدينة بدر", "العبور", "العاصمة الإدارية الجديدة"
-  ],
-  "الجيزة": [
-    "الجيزة", "الدقي", "المهندسين", "6 أكتوبر", "الشيخ زايد", "الهرم",
-    "فيصل", "بولاق الدكرور", "أوسيم", "كرداسة", "أبو النمرس", "البدرشين",
-    "الصف", "أطفيح", "العياط", "حوض الوسطى", "منشأة القناطر", "الباويطي",
-    "إمبابة", "العمرانية", "الحوامدية", "المنيب", "الطالبية"
-  ],
-  "الإسكندرية": [
-    "الإسكندرية", "المنتزه", "العامرية", "برج العرب", "أبو قير", "المعمورة",
-    "سيدي بشر", "العجمي", "العصافرة", "بكوس", "سيدي جابر", "الرمل",
-    "محرم بك", "كرموز", "اللبان", "ورديان", "الدخيلة", "الميناء",
-    "المنشية", "الشاطبي", "ستانلي", "مامورة", "ميامي", "سموحة"
-  ],
-  "الدقهلية": [
-    "المنصورة", "طلخا", "ميت غمر", "دكرنس", "أجا", "منية النصر",
-    "السنبلاوين", "بني عبيد", "ميت سلسيل", "الجمالية", "شربين",
-    "المطرية", "تمي الأمديد", "نبروه", "منية المرشد", "بلقاس",
-    "ميت ناما", "المنزلة", "الكردي", "الكرنك"
-  ],
-  "الشرقية": [
-    "الزقازيق", "بلبيس", "العاشر من رمضان", "فاقوس", "أبو كبير",
-    "ديرب نجم", "الحسينية", "ههيا", "أبو حماد", "منيا القمح",
-    "صان الحجر", "كفر صقر", "الإبراهيمية", "الصالحية الجديدة",
-    "القرين", "أولاد صقر", "مشتول السوق", "هيهيا"
-  ],
-  "القليوبية": [
-    "بنها", "شبرا الخيمة", "القناطر الخيرية", "الخانكة", "قليوب",
-    "طوخ", "كفر شكر", "تلبانة", "بنها الجديدة", "قها",
-    "العبور", "خصوص", "سرس الليان", "منوف القليوبية"
-  ],
-  "كفر الشيخ": [
-    "كفر الشيخ", "دسوق", "فوه", "مطوبس", "بيلا", "الحامول",
-    "سيدي سالم", "الرياض", "الرمانة", "بلطيم", "سيدي غازي",
-    "قلين", "برج البرلس", "مصيف بلطيم"
-  ],
-  "الغربية": [
-    "طنطا", "المحلة الكبرى", "كفر الزيات", "زفتى", "السنطة",
-    "قطور", "بسيون", "سمنود", "الزقازيق الغربية", "طنطا الجديدة",
-    "المنشاة الكبرى", "باصون", "نبروه", "شبراخيت"
-  ],
-  "المنوفية": [
-    "شبين الكوم", "منوف", "أشمون", "قويسنا", "تلا", "الباجور",
-    "السادات", "بركة السبع", "الشهداء", "سرس الليان",
-    "ميت حلفا", "الخطاطبة", "الشيخ مسكين", "منوف الجديدة"
-  ],
-  "البحيرة": [
-    "دمنهور", "كفر الدوار", "رشيد", "إدكو", "أبو المطامير",
-    "الدلنجات", "أبو حمص", "الرحمانية", "شبراخيت", "حوش عيسى",
-    "كوم حمادة", "المحمودية", "وادي النطرون", "إيتاي البارود",
-    "بدر", "بسيون البحيرة", "النوبارية"
-  ],
-  "الإسماعيلية": [
-    "الإسماعيلية", "فايد", "القنطرة", "أبو صوير", "التل الكبير",
-    "القنطرة غرب", "القنطرة شرق", "الكيلو 40", "الشيخ زايد الإسماعيلية"
-  ],
-  "السويس": [
-    "السويس", "الأربعين", "عتاقة", "فيصل",
-    "الجناين", "الصخنة", "القابوطي", "أدبية"
-  ],
-  "بورسعيد": [
-    "بورسعيد", "بورفؤاد", "الضواحي", "الشرق", "العرب",
-    "الزهور", "المناخ", "الجنوب", "الشمال", "مدينة بورسعيد الجديدة"
-  ],
-  "دمياط": [
-    "دمياط", "رأس البر", "فارسكور", "الزرقا", "كفر سعد",
-    "عزبة البرج", "ميت أبو غالب", "دمياط الجديدة", "الروضة",
-    "كفر البطيخ", "السرو"
-  ],
-  "الفيوم": [
-    "الفيوم", "طامية", "إطسا", "سنورس", "إبشواي",
-    "يوسف الصديق", "الحادقة", "أبشواي", "تامية", "قارون",
-    "مدينة الفيوم الجديدة"
-  ],
-  "بني سويف": [
-    "بني سويف", "الفشن", "ناصر", "إهناسيا", "ببا", "سمسطا",
-    "الواسطى", "بياض العرب", "البدري", "الفشن الجديدة",
-    "مدينة بني سويف الجديدة"
-  ],
-  "المنيا": [
-    "المنيا", "ملوي", "سمالوط", "مغاغة", "أبو قرقاص", "العدوة",
-    "بني مزار", "المطاهرة", "دير مواس", "أبو الفداء",
-    "مدينة المنيا الجديدة", "ماغرة", "منيا الجديدة"
-  ],
-  "أسيوط": [
-    "أسيوط", "ديروط", "منفلوط", "القوصية", "أبنوب", "أبو تيج",
-    "الغنايم", "البداري", "ساحل سليم", "صدفا",
-    "مدينة أسيوط الجديدة", "الفتح"
-  ],
-  "سوهاج": [
-    "سوهاج", "أخميم", "جرجا", "البلينا", "المراغة", "طما",
-    "طهطا", "دار السلام", "ساقلته", "المنشأة",
-    "مدينة سوهاج الجديدة", "جهينة"
-  ],
-  "قنا": [
-    "قنا", "قوص", "نجع حمادي", "دشنا", "أبو تشت", "فرشوط",
-    "الوقف", "قفط", "نقادة", "إسنا القنا",
-    "مدينة قنا الجديدة"
-  ],
-  "أسوان": [
-    "أسوان", "كوم أمبو", "إدفو", "دراو", "نصر النوبة",
-    "أبو سمبل", "كلابشة", "البصيلية", "الدر", "الشلال",
-    "مدينة أسوان الجديدة", "أرمنت أسوان"
-  ],
-  "الأقصر": [
-    "الأقصر", "إسنا", "أرمنت", "الطود", "الزينية",
-    "البياضية", "الحبيل", "القرنة", "الدير", "توت عنخ آمون"
-  ],
-  "البحر الأحمر": [
-    "الغردقة", "سفاجا", "القصير", "مرسى علم", "رأس غارب",
-    "شلاتين", "حلايب", "أبو رماد", "الداهر", "ضبعة"
-  ],
-  "الوادي الجديد": [
-    "الخارجة", "الداخلة", "الفرافرة", "باريس", "بلاط",
-    "موط", "القصر", "تنيدة", "بلاط الجديدة", "طنيدة"
-  ],
-  "مطروح": [
-    "مرسى مطروح", "الحمام", "العلمين", "سيدي براني", "السلوم",
-    "النجيلة", "الضبعة", "سيوة", "مارينا", "رأس الحكمة",
-    "الساحل الشمالي", "العلمين الجديدة"
-  ],
-  "شمال سيناء": [
-    "العريش", "رفح", "الشيخ زويد", "بئر العبد", "نخل",
-    "الحسنة", "قسيمة", "أبو عجيلة", "المليز"
-  ],
-  "جنوب سيناء": [
-    "شرم الشيخ", "دهب", "نويبع", "طابا", "سانت كاترين",
-    "رأس سدر", "أبو زنيمة", "الطور", "أبو رديس", "وادي فيران",
-    "رأس سدر الجديدة"
-  ],
-};
 
-const countryCodes = [
-  {code: "+20", country: "مصر", flag: "🇪🇬"},
-  {code: "+966", country: "السعودية", flag: "🇸🇦"},
-  {code: "+971", country: "الإمارات", flag: "🇦🇪"},
-  {code: "+965", country: "الكويت", flag: "🇰🇼"},
-  {code: "+974", country: "قطر", flag: "🇶🇦"},
-  {code: "+973", country: "البحرين", flag: "🇧🇭"},
-  {code: "+968", country: "عمان", flag: "🇴🇲"},
-  {code: "+962", country: "الأردن", flag: "🇯🇴"},
-  {code: "+961", country: "لبنان", flag: "🇱🇧"},
-  {code: "+963", country: "سوريا", flag: "🇸🇾"},
-  {code: "+964", country: "العراق", flag: "🇮🇶"},
-  {code: "+967", country: "اليمن", flag: "🇾🇪"},
-  {code: "+218", country: "ليبيا", flag: "🇱🇾"},
-  {code: "+216", country: "تونس", flag: "🇹🇳"},
-  {code: "+213", country: "الجزائر", flag: "🇩🇿"},
-  {code: "+212", country: "المغرب", flag: "🇲🇦"},
-  {code: "+249", country: "السودان", flag: "🇸🇩"},
-]
 
-// Teacher subjects
-const teacherSubjects = [
-  {value: "arabic", label: "اللغة العربية", stage: ["primary", "preparatory", "secondary"]},
-  {value: "english", label: "اللغة الإنجليزية", stage: ["primary", "preparatory", "secondary"]},
-  {value: "math", label: "الرياضيات", stage: ["primary", "preparatory", "secondary"]},
 
-  {value: "science", label: "العلوم", stage: ["primary", "preparatory"]},
-  {value: "integrated_science", label: "العلوم المتكاملة", stage: ["secondary"]},
 
-  {value: "social", label: "الدراسات الاجتماعية", stage: ["primary", "preparatory"]},
 
-  {value: "physics", label: "الفيزياء", stage: ["secondary"]},
-  {value: "chemistry", label: "الكيمياء", stage: ["secondary"]},
-  {value: "biology", label: "الأحياء", stage: ["secondary"]},
-
-  {value: "history", label: "التاريخ", stage: ["secondary"]},
-  {value: "geography", label: "الجغرافيا", stage: ["secondary"]},
-
-  {value: "psychology_sociology", label: "علم النفس والاجتماع", stage: ["secondary"]},
-
-  {value: "philosophy_logic", label: "الفلسفة والمنطق", stage: ["secondary"]},
-
-  {value: "economics_statistics", label: "الاقتصاد والإحصاء", stage: ["secondary"]},
-
-  {value: "religion", label: "التربية الدينية", stage: ["primary", "preparatory", "secondary"]},
-  {value: "sports", label: "التربية الرياضية", stage: ["primary", "preparatory", "secondary"]},
-
-  {value: "computers", label: "الحاسب الآلي وعلوم الحاسب", stage: ["primary", "preparatory", "secondary"]},
-
-  {value: "technology", label: "التكنولوجيا", stage: ["preparatory"]},
-
-  {value: "art", label: "التربية الفنية", stage: ["primary", "preparatory"]},
-  {value: "music", label: "التربية الموسيقية", stage: ["primary", "preparatory"]},
-]
-
-const teachingStages = [
-  {value: "primary", label: "الابتدائي"},
-  {value: "preparatory", label: "الإعدادي"},
-  {value: "secondary", label: "الثانوي"},
-]
 
 
 export default function SettingsPage() {
@@ -235,6 +43,11 @@ export default function SettingsPage() {
   });
   const [localTeacherData, setLocalTeacherData] = useState({
     stages: [],
+    fullName: userData.fullName,
+    email: userData.email,
+    bio: userData.bio,
+    jobTitle: userData.jobTitle,
+    city: userData.city,
     subjectId: ""
   });
   ////////////////////////////////
@@ -329,13 +142,14 @@ export default function SettingsPage() {
       const compressedFile = await compressImage(file, 300, 0.8);
 
       // إنشاء File جديد بالاسم
-      const finalFile = new File([compressedFile], "avatar.webp", {
+      const finalFile = new File([compressedFile], `${user?.uid}.webp`, {
         type: "image/webp",
       });
 
       const url = await uploadFileToB2(finalFile);
 
       await set(ref(rtdb, `users/${user?.uid}/avatar`), url);
+      await set(ref(rtdb, `teachers/${user?.uid}/avatar`), url);
 
       setUserData(prev => ({...prev, avatar: url}));
 
@@ -368,15 +182,19 @@ export default function SettingsPage() {
     setIsEditing(false);
     try {
       // Update basic user info
-      await set(ref(rtdb, `users/${user?.uid}`), userData);
+      await update(ref(rtdb, `users/${user?.uid}`), userData);
 
       // Update teacher-specific info (stages and subjectId)
       // We use update to preserve other fields like status, createdAt, etc.
       const teacherUpdates = {
         stages: localTeacherData.stages,
+        fullName: userData.fullName,
+        email: userData.email,
+        bio: userData.bio,
+        jobTitle: userData.jobTitle,
+        city: userData.city,
         subjectId: localTeacherData.subjectId
       };
-      const {update} = await import("firebase/database");
       await update(ref(rtdb, `teachers/${user?.uid}`), teacherUpdates);
 
       toaster.create({

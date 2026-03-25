@@ -61,11 +61,18 @@ export async function getAllVideos() {
  * await deleteVideo("abc-guid-123");
  */
 export async function deleteVideo(videoId) {
-  const res = await fetch(`${BASE_URL}/video/${videoId}`, {method: "DELETE"});
-  if (!res.ok) throw new Error((await res.json()).error || "فشل حذف الفيديو");
-  return res.json();
-}
+  const res = await fetch(`${BASE_URL}/video/${videoId}`, {
+    method: "DELETE",
+  });
 
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "فشل حذف الفيديو");
+  }
+
+  return data;
+}
 // ─────────────────────────────────────────
 // 6. الحصول على رابط مشاهدة مؤمَّن (Token)
 // ─────────────────────────────────────────

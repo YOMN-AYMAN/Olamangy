@@ -34,13 +34,6 @@ export const uploadFileToB2 = async (file, onProgress) => {
   // 3️⃣ ارجع الرابط
   return `https://f003.backblazeb2.com/file/Video-Dolphin/${encodeURIComponent(file.name)}`;
 };
-
-
-
-
-
-
-
   // const handleClick = () => {
   //   fileInputRef.current.click();
   // };
@@ -81,7 +74,6 @@ export const uploadFileToB2 = async (file, onProgress) => {
   //     e.target.value = ""; // ✅ reset input عشان تقدر ترفع نفس الملف مرة ثانية
   //   }
   // };
-
 
   // <input
   // type="file"

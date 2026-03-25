@@ -4,7 +4,7 @@
 import {createContext, useContext, useState, useEffect} from "react";
 import {auth, rtdb} from "../auth/firebase";
 import {onAuthStateChanged} from "firebase/auth";
-import {ref, get} from "firebase/database";
+import {ref, get, onValue} from "firebase/database";
 
 const AuthContext = createContext({
   user: null,
@@ -16,25 +16,21 @@ export const AuthProvider = ({children}) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (fbUser) => {
       if (fbUser) {
-        try {
-          const userRef = ref(rtdb, `users/${fbUser.uid}`);
-          const snapshot = await get(userRef);
-
+        const userRef = ref(rtdb, `users/${fbUser.uid}`);
+        return onValue(userRef, (snapshot) => {
           if (snapshot.exists()) {
-            setUser({uid: fbUser.uid, ...snapshot.val()});
+            setUser({ uid: fbUser.uid, ...snapshot.val() });
           } else {
-            setUser({uid: fbUser.uid});
+            setUser({ uid: fbUser.uid });
           }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          setUser({uid: fbUser.uid});
-        }
+          setLoading(false);
+        });
       } else {
         setUser(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();

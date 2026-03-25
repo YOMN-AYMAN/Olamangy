@@ -67,7 +67,6 @@ export default function LandingPage() {
       minH="100vh"
       transition="background 0.3s ease"
     >
-
       {/* 1. Enhanced Navbar */}
       <Box
         bg="bg.panel/95"

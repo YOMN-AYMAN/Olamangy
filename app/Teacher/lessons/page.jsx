@@ -19,18 +19,65 @@ import {
 } from "@chakra-ui/react";
 import {MdVideoLibrary, MdSearch} from "react-icons/md";
 import {FaUpload} from "react-icons/fa";
-import {useEffect, useState} from "react";
-import {ref, onValue} from "firebase/database";
+import {useEffect, useState, useRef} from "react";
+import {ref, onValue, remove} from "firebase/database";
 import {rtdb} from "@/auth/firebase";
 import {useAuth} from "@/providers/AuthContext";
+import {useRouter} from "next/navigation";
 import Link from "next/link";
 import UploadVideo from "./UploadVideo";
+import {deleteVideo} from "@/components/ui/UploadVideo";
 
 export default function AllLessons() {
+  const router = useRouter();
   const {user} = useAuth();
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [lessonToDelete, setLessonToDelete] = useState(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const pressTimer = useRef(null);
+  const isPressing = useRef(false);
+
+  const handlePointerDown = (lesson) => {
+    isPressing.current = false;
+    pressTimer.current = setTimeout(() => {
+      isPressing.current = true;
+      setLessonToDelete(lesson);
+      setIsDeleteDialogOpen(true);
+    }, 600);
+  };
+
+  const handlePointerUp = () => {
+    if (pressTimer.current) clearTimeout(pressTimer.current);
+  };
+
+  const handleClick = (lessonId) => {
+    if (!isPressing.current) {
+      router.push(`/Teacher/lessons/${lessonId}`);
+    }
+  };
+
+  const handleDeleteLesson = async () => {
+    if (!user || !lessonToDelete) return;
+    setDeleteLoading(true);
+    try {
+      const lessonRef = ref(rtdb, `teachers/${user.uid}/lessons/${lessonToDelete.category}/${lessonToDelete.id}`);
+      const arrRef = ref(rtdb, `teachers/${user.uid}/arrLessons/${lessonToDelete.id}`);
+      await remove(lessonRef);
+      await remove(arrRef);
+      await deleteVideo(lessonToDelete.videoUrl);
+      setIsDeleteDialogOpen(false);
+      setLessonToDelete(null);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   const lessonImage = "/Science,_Technology,_Engineering_and_Mathematics.svg.png";
 
@@ -169,36 +216,45 @@ export default function AllLessons() {
           ) : filteredLessons.length > 0 ? (
             <SimpleGrid columns={{base: 1, sm: 2, lg: 3, xl: 4}} gap={6}>
               {filteredLessons.map((lesson) => (
-                <Link href={`/Teacher/lessons/${lesson.id}`} key={lesson.id}>
-                  <Card.Root
-                    overflow="hidden"
-                    shadow="sm"
-                    border="1px solid"
-                    borderColor="border.subtle"
-                    _hover={{shadow: "xl", transform: "translateY(-5px)"}}
-                    transition="all 0.3s"
-                    height="100%"
-                  >
-                    <Card.Body p={3}>
-                      <VStack gap={4} align="stretch">
-                        <Avatar.Root shape="rounded" size="full" h="160px">
-                          <Avatar.Image
-                            src={lesson?.image}
-                            style={{objectFit: "cover"}}
-                          />
-                        </Avatar.Root>
-                        <Box textAlign="right" px={2} pb={2}>
-                          <Card.Title mb={1} fontSize="md">
-                            {lesson.title}
-                          </Card.Title>
-                          <Card.Description fontSize="sm" lineClamp={2}>
-                            {lesson.description || "لا يوجد وصف لهذا الدرس."}
-                          </Card.Description>
-                        </Box>
-                      </VStack>
-                    </Card.Body>
-                  </Card.Root>
-                </Link>
+                <Card.Root
+                  key={lesson.id}
+                  cursor="pointer"
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    setLessonToDelete(lesson);
+                    setIsDeleteDialogOpen(true);
+                  }}
+                  onPointerDown={() => handlePointerDown(lesson)}
+                  onPointerUp={handlePointerUp}
+                  onPointerLeave={handlePointerUp}
+                  onClick={() => handleClick(lesson.id)}
+                  overflow="hidden"
+                  shadow="sm"
+                  border="1px solid"
+                  borderColor="border.subtle"
+                  _hover={{shadow: "xl", transform: "translateY(-5px)"}}
+                  transition="all 0.3s"
+                  height="100%"
+                >
+                  <Card.Body p={3}>
+                    <VStack gap={4} align="stretch">
+                      <Avatar.Root shape="rounded" size="full" h="160px">
+                        <Avatar.Image
+                          src={lesson?.image}
+                          style={{objectFit: "cover"}}
+                        />
+                      </Avatar.Root>
+                      <Box textAlign="right" px={2} pb={2}>
+                        <Card.Title mb={1} fontSize="md">
+                          {lesson.title}
+                        </Card.Title>
+                        <Card.Description fontSize="sm" lineClamp={2}>
+                          {lesson.description || "لا يوجد وصف لهذا الدرس."}
+                        </Card.Description>
+                      </Box>
+                    </VStack>
+                  </Card.Body>
+                </Card.Root>
               ))}
             </SimpleGrid>
           ) : (
@@ -215,6 +271,38 @@ export default function AllLessons() {
           )}
         </Box>
       </Box>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog.Root open={isDeleteDialogOpen} onOpenChange={(e) => setIsDeleteDialogOpen(e.open)}>
+        <Portal display="flex" alignItems="center" justifyContent="center">
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content
+              width="90%"
+              maxWidth="400px"
+              borderRadius="15px"
+              p={6}
+              bg="bg.panel"
+              dir="rtl"
+            >
+              <Dialog.Header mb={4}>
+                <Dialog.Title fontSize="xl" fontWeight="bold" color="red.500">حذف الدرس</Dialog.Title>
+              </Dialog.Header>
+              <Dialog.Body mb={6}>
+                <Text>هل أنت متأكد من حذف درس &quot;{lessonToDelete?.title}&quot; بجميع محتوياته (فيديو، ملفات، وصور) من قاعدة البيانات؟ لا يمكن التراجع عن هذا الإجراء.</Text>
+              </Dialog.Body>
+              <Dialog.Footer display="flex" gap={3} justifyContent="flex-end">
+                <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} disabled={deleteLoading} borderRadius="lg">
+                  إلغاء
+                </Button>
+                <Button colorScheme="red" bg="red.500" color="white" onClick={handleDeleteLesson} loading={deleteLoading} borderRadius="lg" _hover={{bg: "red.600"}}>
+                  تأكيد الحذف
+                </Button>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
     </>
   );
 }

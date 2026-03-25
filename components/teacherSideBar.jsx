@@ -86,7 +86,7 @@ function TeacherSideBar() {
 
               <Dialog.Root>
                 <Dialog.Trigger asChild>
-                  <Avatar.Root  fontWeight="900" size={isMini ? "sm" : "md"}>
+                  <Avatar.Root fontWeight="900" size={isMini ? "sm" : "md"}>
                     <Avatar.Image src={user?.avatar} />
                     {!user?.avatar && user?.fullName.split("")[0]}
                   </Avatar.Root>
@@ -96,7 +96,7 @@ function TeacherSideBar() {
                   <Dialog.Backdrop />
                   <Dialog.Positioner>
                     <Dialog.Content width="fit-content" borderRadius="15px" overflow="hidden" display="flex" alignSelf="center" alignItems="center" justifyContent="center">
-    
+
 
                       <Dialog.Body>
                         <img src={user?.avatar} alt="" />

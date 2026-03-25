@@ -3,7 +3,9 @@ import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 import {AuthProvider} from "@/providers/AuthContext";
 import {TeacherProvider} from "@/providers/teacherProvider";
+import {StudentProvider} from "@/providers/studentProvider";
 import {AppProvider} from "@/providers/appProvider";
+import {DeveloperProvider} from "@/providers/developerProvider";
 import {Cairo} from "next/font/google";
 import {Provider} from "@/components/ui/provider";
 
@@ -25,9 +27,13 @@ export default function RootLayout({children}) {
         <Provider>
           <AuthProvider>
             <TeacherProvider>
-              <AppProvider>    
-                {children}
-              </AppProvider>
+              <StudentProvider>
+                <DeveloperProvider>
+                  <AppProvider>    
+                    {children}
+                  </AppProvider>
+                </DeveloperProvider>
+              </StudentProvider>
             </TeacherProvider>
           </AuthProvider>
         </Provider>

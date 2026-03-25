@@ -22,6 +22,8 @@ import { onAuthStateChanged } from "firebase/auth"
 import { Tooltip } from "@/components/ui/tooltip"
 import { useBreakpointValue } from "@chakra-ui/react"
 import { useState, useEffect } from "react"
+import {useAuth} from "@/providers/AuthContext"
+
 
 const MotionBox = motion(Box)
 
@@ -30,37 +32,7 @@ function StudentSideBar() {
     const router = useRouter()
     const imagePath = "/30175cee-8911-4d80-937d-9c90cc5e9f94.jpg"
     const isMini = useBreakpointValue({ base: true, md: false })
-    
-    // State for user data
-    const [studentName, setStudentName] = useState("")
-    const [studentAvatar, setStudentAvatar] = useState("")
-    const [loading, setLoading] = useState(true)
-
-    // Fetch user data from Realtime Database
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const db = getDatabase()
-                const userRef = ref(db, `users/${user.uid}`)
-                
-                onValue(userRef, (snapshot) => {
-                    const data = snapshot.val()
-                    if (data) {
-                        setStudentName(data.fullName || "طالب")
-                        setStudentAvatar(data.avatar || "")
-                    }
-                    setLoading(false)
-                }, (error) => {
-                    console.error("Error fetching user data:", error)
-                    setLoading(false)
-                })
-            } else {
-                setLoading(false)
-            }
-        })
-
-        return () => unsubscribe()
-    }, [])
+    const { user, loading } = useAuth()
 
     const navLinks = [
         { name: "الرئيسية", href: "/Student/home", icon: MdDashboard },
@@ -110,23 +82,23 @@ function StudentSideBar() {
                         <HStack gap="3" justify="center">
                             <Avatar.Root 
                                 size={isMini ? "sm" : "md"}
-                                bg={!studentAvatar ? "gray.200" : undefined}
-                                color={!studentAvatar ? "gray.500" : undefined}
+                                bg={!user?.avatar ? "gray.200" : undefined}
+                                color={!user?.avatar ? "gray.500" : undefined}
+                                fontWeight="bold"
                             >
-                                {studentAvatar ? (
-                                    <Avatar.Image src={studentAvatar} />
+                                {user?.avatar ? (
+                                    <Avatar.Image src={user.avatar} />
                                 ) : (
                                     <Avatar.Fallback>
-                                        <Icon as={MdPerson} boxSize={isMini ? 4 : 6} />
+                                        <Text fontWeight="black">{user?.fullName?.charAt(0) || "S"}</Text>
                                     </Avatar.Fallback>
                                 )}
                             </Avatar.Root>
-                            
                             {!isMini && (
                                 <Stack gap="0" align="flex-start">
                                     <Text fontSize="xs">أهلا</Text>
                                     <Text fontWeight="bold" fontSize="sm" color="gray.700" whiteSpace="nowrap">
-                                        {loading ? "..." : studentName}
+                                        {loading ? "..." : (user?.fullName ? (user.fullName.split(" ")[0] + " " + (user.fullName.split(" ")[1] || "")) : "طالب")}
                                     </Text>
                                 </Stack>
                             )}

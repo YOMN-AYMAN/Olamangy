@@ -1,246 +1,239 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { Box, Container, Text, Flex, Badge, Button, VStack, HStack, Heading, Checkbox, Icon } from "@chakra-ui/react";
+import { Box, Container, Text, Flex, Button, VStack, HStack, Heading, Icon, Spinner, Center } from "@chakra-ui/react";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { 
     MdArrowCircleRight, 
     MdPlayCircle, 
     MdInsertDriveFile, 
     MdHelpOutline,
-    MdAccessTime,
     MdHelp,
-    MdLogout
+    MdVideocam,
+    MdQuiz
 } from "react-icons/md";
+import { onValue, ref } from "firebase/database";
+import { rtdb } from "@/auth/firebase";
 
-// Mock data for the lesson materials
-const lessonMaterials = [
-    {
-        id: "1",
-        title: "شرح | علامات الإعراب - الأسماء الخمسة - المعرب والمبني من الأسماء",
-        type: "video",
-        duration: "25 دقيقة",
-        completed: true
-    },
-    {
-        id: "2",
-        title: "ملخص الحصة التأسيسية الأولى",
-        type: "file",
-        completed: false
-    },
-    {
-        id: "3",
-        title: "واجب الحصة التأسيسية الأولى",
-        type: "exercise",
-        duration: "30 دقيقة",
-        questions: "12 سؤال",
-        completed: true
-    }
-];
-
-// Filter types
-const filters = [
-    { id: "all", label: "الكل", color: "#FF5A7E" },
-    { id: "videos", label: "فيديوهات", color: "#E0E0E0" },
-    { id: "files", label: "ملفات", color: "#E0E0E0" },
-    { id: "exercises", label: "تمارين", color: "#E0E0E0" }
-];
-
-const MaterialItem = ({ material, onToggleComplete, teacherId, lessonId }) => {
-    const cardBg = useColorModeValue("white", "#1A202C");
+// Component to render part content
+const PartViewer = ({ part }) => {
+    const bgColor = useColorModeValue("white", "#1A202C");
     const textColor = useColorModeValue("gray.800", "white");
-    const borderColor = useColorModeValue("gray.200", "gray.600");
-    const metaColor = useColorModeValue("gray.500", "gray.400");
-    
-    const handleCheckboxClick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onToggleComplete(material.id);
-    };
-    const getIcon = () => {
-        switch (material.type) {
-            case "video":
-                return (
-                    <Box bg="#00BCD4" borderRadius="3xl" p={1}>
-                        <Icon as={MdPlayCircle} boxSize={5} color="white" />
-                    </Box>
-                );
-            case "file":
-                return (
-                    <Box bg="#00BCD4" borderRadius="md" p={1}>
-                        <Icon as={MdInsertDriveFile} boxSize={5} color="white" />
-                    </Box>
-                );
-            case "exercise":
-                return (
-                    <Box bg="#00BCD4" borderRadius="lg" p={1}>
-                        <Icon as={MdHelp} boxSize={5} color="white" />
-                    </Box>
-                );
-            default:
-                return null;
-        }
-    };
 
-    return (
-           <Link 
-            href={`/Student/teacher/${teacherId}/lesson/${lessonId}/details/${material.id}`}
-            style={{ textDecoration: 'none', display: 'block' }}
-        >
-        <Flex 
-            align="center" 
-            gap={4} 
-            bg={cardBg}
-            p={6} 
-            borderRadius="xl"
-            border="1px solid"
-            borderColor={borderColor}
-            boxShadow={useColorModeValue("0 2px 4px rgba(0,0,0,0.1)", "0 2px 4px rgba(0,0,0,0.3)")}
-            _hover={{ shadow: useColorModeValue("0 6px 8px rgba(255, 90, 126, 0.24)", "0 6px 8px rgba(255, 90, 126, 0.15)"), transform: "translateY(-2px)" }}
-            transition="all 0.2s"
-            flexWrap={{ base: "wrap", md: "nowrap" }}
-        >
-            {/* Type Icon */}
-            {getIcon()}
+    if (!part) return null;
 
-            {/* Title */}
-            <Text 
-                flex="1" 
-                fontSize={{ base: "sm", md: "md" }}
-                color={textColor}
-                textAlign="right"
-                fontWeight="medium"
-            >
-                {material.title}
-            </Text>
+    if (part.type === "video") {
+        return (
+            <VStack gap={4} w="100%" align="stretch">
+                <Box borderRadius="2xl" overflow="hidden" shadow="lg" aspectRatio={16/9} bg="black" position="relative">
+                    {part.videoUrl ? (
+                        <iframe
+                            src={`https://iframe.mediadelivery.net/embed/595363/${part.videoUrl}?autoplay=false&loop=false&muted=false&preload=true`}
+                            width="100%"
+                            height="100%"
+                            style={{ position: "absolute", top: 0, left: 0, border: "none" }}
+                            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+                            allowFullScreen
+                        />
+                    ) : (
+                        <Center w="100%" h="100%" color="white">لا يوجد فيديو</Center>
+                    )}
+                </Box>
+                <VStack align="flex-start" p={2}>
+                    <Heading size="md" color={textColor}>{part.title || "فيديو"}</Heading>
+                    {part.description && <Text color="gray.500">{part.description}</Text>}
+                </VStack>
+            </VStack>
+        );
+    }
 
-            {/* Meta Info */}
-            <HStack gap={{ base: 1, md: 2 }} color={metaColor} fontSize={{ base: "xs", md: "sm" }} flexWrap="wrap" justify={{ base: "flex-start", md: "flex-end" }}>
-                {material.duration && (
-                    <Flex align="center" gap={1}>
-                        <Icon as={MdAccessTime} boxSize={3.5} />
-                        <Text>{material.duration}</Text>
-                    </Flex>
-                )}
-                {material.questions && (
-                    <Flex align="center" gap={1}>
-                        <Icon as={MdHelpOutline} boxSize={3.5} />
-                        <Text>{material.questions}</Text>
-                    </Flex>
-                )}
-            </HStack>
-            {/* Checkbox */}
-           <form onClick={(e) => e.preventDefault()}>
-                        <label>
-                            <input
-                                type="checkbox"
-                                onChange={handleCheckboxClick}
-                                onClick={(e) => e.stopPropagation()}
-                                style={{
-                                    width: '15px',
-                                    height: '15px',
-                                    accentColor: "#FF5A7E",
-                                    transform: 'scale(1.2)',
-                                    cursor: 'pointer'
-                                }}
-                            />
-                        </label>
-                    </form>
-            
-        </Flex>
-        </Link>
-    );
+    if (part.type === "file") {
+        return (
+            <VStack gap={4} w="100%" align="stretch">
+                <Box bg={bgColor} p={6} borderRadius="xl" border="1px solid" borderColor={useColorModeValue("gray.200", "gray.700")} textAlign="center">
+                    <Icon as={MdInsertDriveFile} boxSize={16} color="blue.500" mb={4} />
+                    <Heading size="md" color={textColor} mb={2}>{part.title || "ملف"}</Heading>
+                    {part.description && <Text color="gray.500" mb={4}>{part.description}</Text>}
+                    {part.fileUrl && (
+                        <Button as="a" href={part.fileUrl} target="_blank" rel="noopener noreferrer" bg="blue.500" color="white" _hover={{bg: "blue.600"}}>
+                            تحميل أو عرض الملف
+                        </Button>
+                    )}
+                </Box>
+            </VStack>
+        );
+    }
+
+    if (part.type === "exam") {
+        return (
+            <VStack gap={4} w="100%" align="stretch">
+                <Box bg={bgColor} p={6} borderRadius="xl" border="1px solid" borderColor={useColorModeValue("gray.200", "gray.700")} textAlign="center">
+                    <Icon as={MdQuiz} boxSize={16} color="purple.500" mb={4} />
+                    <Heading size="md" color={textColor} mb={2}>{part.title || "تمرين / امتحان"}</Heading>
+                    {part.description && <Text color="gray.500" mb={4}>{part.description}</Text>}
+                    <Button bg="purple.500" color="white" size="lg" _hover={{bg: "purple.600"}}>
+                        بدء التمرين
+                    </Button>
+                </Box>
+            </VStack>
+        );
+    }
+
+    return <Center p={10}>محتوى غير مدعوم</Center>;
 };
-
 
 export default function LessonDetailPage() {
     const params = useParams();
-    const [selectedFilter, setSelectedFilter] = useState("all");
-    const [materials, setMaterials] = useState(lessonMaterials);
+    const router = useRouter();
     const pageBg = useColorModeValue("white", "#0F172A");
     const headingColor = useColorModeValue("gray.800", "white");
-    const buttonBg = useColorModeValue("white", "#2D3748");
-    const buttonHoverBg = useColorModeValue("gray.100", "#374151");
-    const buttonBorderColor = useColorModeValue("gray.200", "#4B5563");
+    const [lesson, setLesson] = useState(null);
+    const [loading, setLoading] = useState(true);
+    
+    const [partOrder, setPartOrder] = useState([]);
+    const [activePartId, setActivePartId] = useState(null);
 
-    const handleToggleComplete = (id) => {
-        setMaterials(prev => prev.map(m => 
-            m.id === id ? { ...m, completed: !m.completed } : m
-        ));
-    };
+    useEffect(() => {
+        if (!params.id || !params.lesson) return;
 
-    const filteredMaterials = selectedFilter === "all" 
-        ? materials 
-        : materials.filter(m => m.type === selectedFilter.slice(0, -1)); // remove 's' from filter id
+        const lessonPathRef = ref(rtdb, `teachers/${params.id}/arrLessons/${params.lesson}`);
+        
+        const unsubscribePath = onValue(lessonPathRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const path = snapshot.val();
+                const lessonRef = ref(rtdb, `teachers/${params.id}/lessons/${path}/${params.lesson}`);
+                onValue(lessonRef, (lessonSnapshot) => {
+                    if (lessonSnapshot.exists()) {
+                        const data = lessonSnapshot.val();
+                        setLesson(data);
+                        // Pages array mapping (index 0 is null usually, parts start at 1)
+                        const pagesData = data?.pages || data?.arr;
+                        if (pagesData) {
+                            const keys = Object.keys(pagesData);
+                            const order = keys.map(Number).filter(i => i > 0 || pagesData === data?.arr).sort((a,b) => a-b);
+                            
+                            setPartOrder(order);
+                            // Set to first part if not already set
+                            if (order.length > 0 && activePartId === null) {
+                                setActivePartId(order[0]);
+                            }
+                        } else {
+                            setPartOrder([]);
+                        }
+                    }
+                    setLoading(false);
+                });
+            } else {
+                setLoading(false);
+            }
+        });
+
+        return () => {
+            unsubscribePath();
+        };
+    }, [params.id, params.lesson]);
+
+    if (loading) {
+        return (
+            <Center minH="100vh" bg={pageBg}>
+                <Spinner size="xl" color="#00BCD4" thickness="4px" />
+            </Center>
+        );
+    }
+
+    if (!lesson) {
+        return (
+            <Center minH="100vh" bg={pageBg} flexDir="column" gap={4}>
+                <Text fontSize="xl" color="gray.500">الدرس غير موجود</Text>
+                <Button colorScheme="blue" onClick={() => router.push(`/Student/teacher/${params.id}`)}>العودة</Button>
+            </Center>
+        );
+    }
+
+    const pagesData = lesson?.pages || lesson?.arr;
+    const currentPartContent = pagesData ? pagesData[activePartId] : null;
 
     return (
         <Box minH="100vh" dir="rtl" bg={pageBg}>
-            {/* Main Content Area */}
             <Box mx={{ base: 0, sm: 1, md: 4, lg: 8 }} minH="100vh">
-                {/* Page Content */}
                 <Container maxW="container.lg" py={{ base: 3, sm: 4, md: 8 }} px={{ base: 2, sm: 3, md: 4, lg: 6 }}>
-                    {/* Lesson Title Header */}
-                    <Flex align="center" gap={3} mb={8} flexWrap="wrap">
-                            <Box 
-                                bg={useColorModeValue("black", "#2D3748")} 
-                                borderRadius="lg" 
-                                p={2}
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                            >
-                                <Link href={`/Student/teacher/${params.id}`}>
+                    
+                    {/* Header */}
+                    <Flex align="center" gap={3} mb={6} flexWrap="wrap">
+                        <Box 
+                            bg={useColorModeValue("black", "#2D3748")} 
+                            borderRadius="lg" 
+                            p={2}
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                        >
+                            <Link href={`/Student/teacher/${params.id}`}>
                                 <Icon as={MdArrowCircleRight} boxSize={6} color="white" />
-                                </Link>
-                            </Box>
+                            </Link>
+                        </Box>
                         <Heading size={{ base: "md", md: "lg" }} color={headingColor}>
-                            الحصة التأسيسية الأولى
+                            {lesson?.title}
                         </Heading>
                     </Flex>
 
-                    {/* Filters */}
-                    <Flex justify="center" gap={{ base: 2, md: 3 }} mb={8} flexWrap="wrap">
-                        {filters.map(filter => (
-                            <Button
-                                key={filter.id}
-                                bg={selectedFilter === filter.id ? "#FF5A7E" : buttonBg}
-                                color={selectedFilter === filter.id ? "white" : useColorModeValue("gray.600", "white")}
-                                borderRadius="xl"
-                                px={{ base: 3, md: 6 }}
-                                py={{ base: 1, md: 2 }}
-                                onClick={() => setSelectedFilter(filter.id)}
-                                _hover={{ 
-                                    bg: selectedFilter === filter.id ? "#FF5A7E" : buttonHoverBg,
-                                    transform: "translateY(-1px)"
-                                }}
-                                transition="all 0.2s"
-                                fontSize={{ base: "xs", md: "sm" }}
-                                fontWeight="medium"
-                                border="1px solid"
-                                borderColor={selectedFilter === filter.id ? "#FF5A7E" : buttonBorderColor}
-                                boxShadow={selectedFilter === filter.id ? "0 2px 8px rgba(255,90,126,0.3)" : "none"}
-                            >
-                                {filter.label}
-                            </Button>
-                        ))}
-                    </Flex>
+                    {/* Parts Navigation Bar */}
+                    <Box
+                        width="100%"
+                        overflowX="auto"
+                        bg={useColorModeValue("gray.50", "#1A202C")}
+                        p={4}
+                        borderRadius="2xl"
+                        shadow="sm"
+                        mb={6}
+                        border="1px solid"
+                        borderColor={useColorModeValue("gray.200", "gray.700")}
+                    >
+                        {partOrder.length > 0 ? (
+                            <HStack gap={3} justify="start" wrap="nowrap">
+                                {partOrder.map((pageIdx, idx) => {
+                                    const isActive = activePartId === pageIdx;
+                                    const partData = pagesData[pageIdx];
+                                    // if part uses 0 index and it's from arr, show it as Part 1
+                                    const displayNum = pagesData === lesson?.arr ? idx + 1 : idx + 1;
+                                    return (
+                                        <Button
+                                            key={pageIdx}
+                                            onClick={() => setActivePartId(pageIdx)}
+                                            variant={isActive ? "solid" : "outline"}
+                                            bg={isActive ? "#FF5A7E" : "transparent"}
+                                            color={isActive ? "white" : useColorModeValue("gray.700", "gray.300")}
+                                            borderColor={isActive ? "#FF5A7E" : useColorModeValue("gray.300", "gray.600")}
+                                            borderRadius="xl"
+                                            size="md"
+                                            px={6}
+                                            _hover={{ bg: isActive ? "#E0486D" : useColorModeValue("gray.100", "gray.700") }}
+                                            transition="all 0.2s"
+                                            flexShrink={0}
+                                        >
+                                            بارت {displayNum}
+                                        </Button>
+                                    );
+                                })}
+                            </HStack>
+                        ) : (
+                            <Text textAlign="center" color="gray.500">لا يوجد محتوى في هذا الدرس حالياً</Text>
+                        )}
+                    </Box>
 
-                    {/* Materials List */}
-                    <VStack gap={3} align="stretch">
-                        {filteredMaterials.map(material => (
-                            <MaterialItem 
-                                key={material.id}
-                                material={material}
-                                onToggleComplete={() => handleToggleComplete(material.id)}
-                            />
-                        ))}
-                    </VStack>
+                    {/* Active Part Content */}
+                    <Box mt={4}>
+                        {currentPartContent ? (
+                            <PartViewer part={currentPartContent} />
+                        ) : (
+                            <Center p={10} color="gray.500">قم باختيار جزء لعرض المحتوى</Center>
+                        )}
+                    </Box>
+
                 </Container>
             </Box>
-
-           
         </Box>
     );
 }

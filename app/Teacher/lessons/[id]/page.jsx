@@ -115,7 +115,7 @@ export default function LessonDetailsPage() {
   const [isSavingInfo, setIsSavingInfo]         = useState(false);
   const [editTitle, setEditTitle]               = useState("");
   const [editDescription, setEditDescription]   = useState("");
-  const [partOrder, setPartOrder]               = useState([]); // ترتيب الأجزاء
+  const [partOrder, setPartOrder]               = useState([1]); // ترتيب الأجزاء
   const [activeDragId, setActiveDragId]         = useState(null);
   const imageUploadRef = useRef(null);
 
@@ -212,12 +212,10 @@ export default function LessonDetailsPage() {
   }, [id, teacherProfile]);
 
   useEffect(() => {
-    setLimit(lesson?.pages?.length - 1 || 1);
-    // بناء قائمة الترتيب الأولية (index من 1 للأجزاء الفعلية)
-    if (lesson?.pages) {
-      setPartOrder(lesson.pages.map((_, i) => i).filter((i) => i > 0));
-    }
+    setLimit(Object.values(lesson?.pages || {}).length  || 1);
+    setPartOrder(Object.keys(lesson?.pages || {}).length>1?Object.keys(lesson?.pages || {}):[1] );
   }, [lesson]);
+
   ////////////////////////
   useEffect(() => {
     if (parts && lesson?.pages) {
@@ -238,7 +236,7 @@ export default function LessonDetailsPage() {
     return (
       <Center height="80vh" flexDirection="column" gap={4}>
         <Text fontSize="xl" fontWeight="bold" color="gray.500">الدرس غير موجود</Text>
-        <Button onClick={() => router.push("/Teacher/videos")} colorScheme="blue">العودة للدروس</Button>
+        <Button onClick={() => router.push("/Teacher/lessons")} colorScheme="blue">العودة للدروس</Button>
       </Center>
     );
   }
@@ -249,7 +247,7 @@ export default function LessonDetailsPage() {
     const match = url?.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
   };
-
+console.log(parts,"parts")
   const videoId = getYoutubeId(lesson.videoUrl);
 
   const stageLabels = {
@@ -500,18 +498,18 @@ export default function LessonDetailsPage() {
                         <Icon as={MdExpandMore} boxSize={5} color={activeSection == "video" ? "fg.pink" : "fg.subtle"} />
                       </HStack>
                       <HStack gap={3}>
-                        <Text fontWeight="bold" color={activeSection == "video" ? "fg.pink" : "fg.subtle"} >فيديو {lesson?.arr?.[parts - 1]?.type === "video" && "(مطبق)"}</Text>
+                        <Text fontWeight="bold" color={activeSection == "video" ? "fg.pink" : "fg.subtle"} >فيديو {lesson?.pages?.[parts - 1]?.type === "video" }</Text>
                         <Icon as={MdVideoLibrary} boxSize={5} color={activeSection == "video" ? "fg.pink" : "fg.subtle"} />
                       </HStack>
                     </HStack>
                   </AccordionItemTrigger>
                   <AccordionItemContent px={6} pb={6}>
                     <VStack align="stretch" gap={4}>
-                      {lesson?.arr?.[parts - 1]?.type === "video" && (
+                      {lesson?.pages?.[parts - 1]?.type === "video" && (
                         <Box p={4} bg="bg.muted" borderRadius="lg">
-                          <Text fontWeight="bold">{lesson.arr[parts - 1].title}</Text>
-                          <Text fontSize="sm">{lesson.arr[parts - 1].description}</Text>
-                          <Text fontSize="xs" color="blue.500" mt={2}>ID: {lesson.arr[parts - 1].videoUrl}</Text>
+                          <Text fontWeight="bold">{lesson.pages[parts - 1].title}</Text>
+                          <Text fontSize="sm">{lesson.pages[parts - 1].description}</Text>
+                          <Text fontSize="xs" color="blue.500" mt={2}>ID: {lesson.pages[parts - 1].videoUrl}</Text>
                         </Box>
                       )}
                       <Separator />
@@ -537,18 +535,18 @@ export default function LessonDetailsPage() {
                         <Icon as={MdExpandMore} boxSize={5} color={activeSection == "file" ? "fg.pink" : "fg.subtle"} />
                       </HStack>
                       <HStack gap={3}>
-                        <Text fontWeight="bold" color={activeSection == "file" ? "fg.pink" : "fg.subtle"}>ملف {lesson?.arr?.[parts - 1]?.type === "file" && "(مطبق)"}</Text>
+                        <Text fontWeight="bold" color={activeSection == "file" ? "fg.pink" : "fg.subtle"}>ملف {lesson?.pages?.[parts - 1]?.type === "file" && "(مطبق)"}</Text>
                         <Icon as={MdInsertDriveFile} boxSize={5} color={activeSection == "file" ? "fg.pink" : "fg.subtle"} />
                       </HStack>
                     </HStack>
                   </AccordionItemTrigger>
                   <AccordionItemContent px={6} pb={6}>
                     <VStack align="stretch" gap={4}>
-                      {lesson?.arr?.[parts - 1]?.type === "file" && (
+                      {lesson?.pages?.[parts - 1]?.type === "file" && (
                         <Box p={4} bg="bg.muted" borderRadius="lg">
-                          <Text fontWeight="bold">{lesson.arr[parts - 1].title}</Text>
-                          <Text fontSize="sm">{lesson.arr[parts - 1].description}</Text>
-                          <Text fontSize="xs" color="blue.500" mt={2}>ID: {lesson.arr[parts - 1].videoUrl}</Text>
+                          <Text fontWeight="bold">{lesson.pages[parts - 1].title}</Text>
+                          <Text fontSize="sm">{lesson.pages[parts - 1].description}</Text>
+                          <Text fontSize="xs" color="blue.500" mt={2}>ID: {lesson.pages[parts - 1].videoUrl}</Text>
                         </Box>
                       )}
                       <Separator />
@@ -575,7 +573,7 @@ export default function LessonDetailsPage() {
                         <Icon as={MdExpandMore} boxSize={5} color={activeSection == "exam" ? "fg.pink" : "fg.subtle"} />
                       </HStack>
                       <HStack gap={3}>
-                        <Text fontWeight="bold" color={activeSection == "exam" ? "fg.pink" : "fg.subtle"}>امتحان {lesson?.arr?.[parts - 1]?.type === "quiz" && "(مطبق)"}</Text>
+                        <Text fontWeight="bold" color={activeSection == "exam" ? "fg.pink" : "fg.subtle"}>امتحان {lesson?.pages?.[parts - 1]?.type === "quiz" && "(مطبق)"}</Text>
                         <Icon as={MdQuiz} boxSize={5} color={activeSection == "exam" ? "fg.pink" : "fg.subtle"} />
                       </HStack>
                     </HStack>

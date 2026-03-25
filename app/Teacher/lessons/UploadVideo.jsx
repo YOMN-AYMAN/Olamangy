@@ -140,7 +140,7 @@ export default function UploadVideo() {
 
       // Redirect to the detail page
       setTimeout(() => {
-        router.push(`/Teacher/videos/${lessonId}`)
+        router.push(`/Teacher/lessons/${lessonId}`)
       }, 500)
     } catch (error) {
       console.error("Error saving lesson:", error)
